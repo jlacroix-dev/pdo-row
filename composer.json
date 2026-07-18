@@ -1,22 +1,31 @@
 {
-    "name": "jlacroix-dev/pdo-row",
-    "description": "Generate typed class for PDO fetchObject",
-    "license": ["MIT"],
-    "type": "library",
-    "keywords": ["dev", "pdo", "row", "dto"],
-    "autoload": {
-        "psr-4": {
-            "JlacroixDev\\PdoRow\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Jonathan Lacroix",
-            "email": "jlacroix.dev@gmail.com"
-        }
-    ],
-    "require": {},
-    "bin": [
-        "bin/pdo-row"
-    ]
+  "name": "jlacroix-dev/pdo-row",
+  "description": "Generate typed class for PDO fetchObject",
+  "license": [
+    "MIT"
+  ],
+  "type": "library",
+  "keywords": [
+    "dev",
+    "pdo",
+    "row",
+    "dto"
+  ],
+  "autoload": {
+    "psr-4": {
+      "JlacroixDev\\PdoRow\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Jonathan Lacroix",
+      "email": "jlacroix.dev@gmail.com"
+    }
+  ],
+  "bin": [
+    "bin/pdo-row"
+  ],
+  "require": {
+    "ext-pdo": "*"
+  }
 }

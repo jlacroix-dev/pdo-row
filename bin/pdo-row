@@ -3,8 +3,8 @@
 
 declare(strict_types=1);
 
-use JlacroixDev\PdoRow\Command\DefaultCommand;
+use JlacroixDev\PdoRow\Command;
 
 include $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
 
-exit((new DefaultCommand())->run());
+exit((new Command())->run());
