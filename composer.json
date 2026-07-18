@@ -1,6 +1,7 @@
 {
     "name": "jlacroix-dev/pdo-row",
     "description": "Generate typed class for PDO fetchObject",
+    "license": ["MIT"],
     "type": "library",
     "keywords": ["dev", "pdo", "row", "dto"],
     "autoload": {
