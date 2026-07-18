@@ -1,0 +1,17 @@
+{
+    "name": "jlacroix-dev/pdo-row",
+    "description": "Generate typed class for PDO fetchObject",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "JlacroixDev\\PdoRow\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jonathan Lacroix",
+            "email": "jlacroix.dev@gmail.com"
+        }
+    ],
+    "require": {}
+}
