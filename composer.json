@@ -13,5 +13,8 @@
             "email": "jlacroix.dev@gmail.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "bin": [
+        "bin/pdo-row"
+    ]
 }
