@@ -2,6 +2,7 @@
     "name": "jlacroix-dev/pdo-row",
     "description": "Generate typed class for PDO fetchObject",
     "type": "library",
+    "keywords": ["dev", "pdo", "row", "dto"],
     "autoload": {
         "psr-4": {
             "JlacroixDev\\PdoRow\\": "src/"
