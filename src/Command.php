@@ -21,7 +21,7 @@ Usage:
   pdo-row [options]
 
 Options:
-  --configuration=CONFIGURATION     Path to project configuration file, default to 'pdo-row.php' or 'pdo-row.php.dist'
+  --configuration=CONFIGURATION     Path to project configuration file, default to 'pdo-row.php'
   --help                            Display this help message
  
 HELP;
@@ -44,9 +44,10 @@ HELP;
                 return self::FAILURE;
             }
         } else {
-            $configPath = $this->getDefaultConfigPath();
-            if (is_null($configPath)) {
-                echo "Config file not found. Create `pdo-row.php` or `pdo-row.php.dist`" . PHP_EOL;
+            $projectRoot = dirname(__DIR__, 4);
+            $configPath = $projectRoot . '/pdo-row.php';
+            if (!file_exists($configPath)) {
+                echo "Config file not found. Create `pdo-row.php`" . PHP_EOL;
                 return self::FAILURE;
             }
         }
@@ -108,7 +109,7 @@ SQL;
             }
             $className = $this->getClassName($table);
 
-            $code = $this->render('templates/class.php', [
+            $code = $this->render(__DIR__.'/../templates/class.php', [
                 'namespace' => $config->getNamespace(),
                 'className' => $className,
                 'properties' => $properties,
@@ -122,20 +123,6 @@ SQL;
         }
 
         return self::SUCCESS;
-    }
-
-    private function getDefaultConfigPath(): ?string
-    {
-        $configPaths = [
-            'pdo-row.php',
-            'pdo-row.php.dist',
-        ];
-        foreach ($configPaths as $configPath) {
-            if (file_exists($configPath)) {
-                return $configPath;
-            }
-        }
-        return null;
     }
 
     private function render(string $template, array $data): string
