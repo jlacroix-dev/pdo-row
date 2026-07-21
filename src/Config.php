@@ -11,6 +11,8 @@ final class Config
     private PDO $pdo;
     private string $directory = 'src/Repository/PDO/TableRow';
     private string $namespace = 'App\\Repository\\PDO\\TableRow';
+    private string $template = __DIR__ . '/../templates/class.php';
+    private ?NamingStrategy $namingStrategy = null;
     private ?string $phpVersion = null;
 
     public function __construct(PDO $pdo)
@@ -35,6 +37,18 @@ final class Config
         return $this;
     }
 
+    public function withTemplate(string $template): self
+    {
+        $this->template = $template;
+        return $this;
+    }
+
+    public function withNamingStrategy(NamingStrategy $namingStrategy): self
+    {
+        $this->namingStrategy = $namingStrategy;
+        return $this;
+    }
+
     public function withPhpVersion(string $phpVersion): self
     {
         $this->phpVersion = $phpVersion;
@@ -54,6 +68,16 @@ final class Config
     public function getNamespace(): string
     {
         return $this->namespace;
+    }
+
+    public function getTemplate(): string
+    {
+        return $this->template;
+    }
+
+    public function getNamingStrategy(): NamingStrategy
+    {
+        return $this->namingStrategy ?? new MyNaming();
     }
 
     public function getPhpVersion(): string

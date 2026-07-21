@@ -1,9 +1,13 @@
 <?php
+
+use JlacroixDev\PdoRow\Column;
+
 /**
  * @var string $namespace
  * @var string $className
- * @var array<string, string> $properties
+ * @var Column[] $columns
  */
+
 ?>
 <?= '<?php' ?>
 
@@ -16,7 +20,10 @@ namespace <?= $namespace ?>;
  */
 class <?= $className . PHP_EOL ?>
 {
-<?php foreach ($properties as $name => $type): ?>
-    public readonly <?= $type ?> $<?= $name ?>;
+<?php foreach ($columns as $column): ?>
+    // <?= $column->type ?> <?= $column->nullable ? 'NULL' : 'NOT NULL' ?>
+
+    public readonly <?= $column->nullable ? '?string' : 'string' ?> $<?= $column->name ?>;
+
 <?php endforeach; ?>
 }

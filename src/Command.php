@@ -44,8 +44,8 @@ HELP;
                 return self::FAILURE;
             }
         } else {
-            $projectRoot = dirname(__DIR__, 4);
-            $configPath = $projectRoot . '/pdo-row.php';
+            $workdir = getcwd();
+            $configPath = $workdir . '/pdo-row.php';
             if (!file_exists($configPath)) {
                 echo "Config file not found. Create `pdo-row.php`" . PHP_EOL;
                 return self::FAILURE;
@@ -99,20 +99,23 @@ SQL;
 
             $stmt = $config->getPdo()->prepare($sql);
             $stmt->execute([$table]);
-            $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $properties = [];
-            foreach ($columns as $column) {
-                $name = $column['COLUMN_NAME'];
-                $type = $column['IS_NULLABLE'] === 'YES' ? '?string' : 'string';
-                $properties[$name] = $type;
-            }
-            $className = $this->getClassName($table);
+            $className = $config->getNamingStrategy()->class($table);
+            $columns = array_map(function ($row): Column {
+                return new Column(
+                    $row['COLUMN_NAME'],
+                    $row['COLUMN_TYPE'],
+                    $row['IS_NULLABLE'] === 'YES',
+                    '',
+                    $row['COLUMN_COMMENT'],
+                );
+            }, $rows);
 
-            $code = $this->render(__DIR__.'/../templates/class.php', [
+            $code = $this->render($config->getTemplate(), [
                 'namespace' => $config->getNamespace(),
                 'className' => $className,
-                'properties' => $properties,
+                'columns' => $columns,
             ]);
 
             $outputDir = $config->getDirectory();
