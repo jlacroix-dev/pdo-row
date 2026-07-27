@@ -102,7 +102,7 @@ SQL;
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $className = $config->getNamingStrategy()->class($table);
-            $columns = array_map(function ($row): Column {
+            $columns = array_map(function (array $row): Column {
                 return new Column(
                     $row['COLUMN_NAME'],
                     $row['COLUMN_TYPE'],
@@ -135,14 +135,5 @@ SQL;
         ob_start();
         include $template;
         return ob_get_clean();
-    }
-
-    private function getClassName(string $tableName): string
-    {
-        $string = strtolower($tableName);
-        $string = str_replace('_', ' ', $string);
-        $string = ucwords($string);
-        $string = str_replace(' ', '', $string);
-        return $string . 'TableRow';
     }
 }

@@ -29,7 +29,8 @@
     "ext-pdo": "*"
   },
   "require-dev": {
-    "phpstan/phpstan": "^2.2",
+    "rector/rector": "^2.5",
+    "phpstan/phpstan": "2.2.5",
     "phpstan/phpstan-strict-rules": "^2.0"
   }
 }
