@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JlacroixDev\PdoRow\Utils;
+namespace JlacroixDev\PdoRow\Template;
 
 final class TemplateRenderer
 {

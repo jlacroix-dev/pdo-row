@@ -6,9 +6,10 @@ namespace JlacroixDev\PdoRow\Command;
 
 use JlacroixDev\PdoRow\Config;
 use JlacroixDev\PdoRow\Model\Column;
-use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\ColumnsTableRow;
+use JlacroixDev\PdoRow\Model\Table;
+use JlacroixDev\PdoRow\TableInspector\TableInspector;
+use JlacroixDev\PdoRow\Template\TemplateRenderer;
 use JlacroixDev\PdoRow\Utils\Filesystem;
-use JlacroixDev\PdoRow\Utils\TemplateRenderer;
 use JlacroixDev\PdoRow\Version;
 use PDO;
 use PDOStatement;
@@ -17,8 +18,9 @@ use RuntimeException;
 final class GenerateCommand implements Command
 {
     public function __construct(
+        private readonly TableInspector   $tableInspector,
         private readonly TemplateRenderer $renderer,
-        private readonly Filesystem $filesystem,
+        private readonly Filesystem       $filesystem,
     )
     {
 
@@ -92,42 +94,24 @@ HELP;
 
         echo "Start generating..." . PHP_EOL;
 
-        $tables = $this->getTables($config);
+        $tables = $this->tableInspector
+            ->inspect($config->getPdo());
 
-        foreach ($tables as $tableName) {
+        $tables = $this->filterTables(
+            $tables,
+            $config->getOnlyTables(),
+            $config->getExceptTables(),
+        );
 
-            $sql = <<<SQL
-SELECT *
-FROM information_schema.columns
-WHERE TABLE_SCHEMA = DATABASE()
-AND TABLE_NAME = ?
-ORDER BY ORDINAL_POSITION
-SQL;
+        foreach ($tables as $table) {
 
-            $stmt = $config->getPdo()->prepare($sql);
-            $stmt->execute([$tableName]);
-            /** @var ColumnsTableRow[] $rows */
-            $rows = $stmt->fetchAll(PDO::FETCH_CLASS, ColumnsTableRow::class);
-            if (count($rows) === 0) {
-                throw new RuntimeException("Table $tableName does not exist");
-            }
-
-            $className = $config->getNamingStrategy()->class($tableName);
-            $columns = array_map(function (ColumnsTableRow $row): Column {
-                return new Column(
-                    $row->COLUMN_NAME ?? '',
-                    $row->COLUMN_TYPE,
-                    $row->IS_NULLABLE === 'YES',
-                    $row->COLUMN_DEFAULT,
-                    $row->COLUMN_COMMENT,
-                );
-            }, $rows);
+            $className = $config->getNamingStrategy()->class($table->name);
 
             $code = $this->renderer->render($config->getTemplate(), [
                 'version' => Version::VERSION,
                 'namespace' => $config->getNamespace(),
                 'className' => $className,
-                'columns' => $columns,
+                'columns' => $table->columns,
             ]);
 
             $outputDir = $config->getDirectory();
@@ -141,32 +125,28 @@ SQL;
     }
 
     /**
-     * @return string[]
+     * @param Table[] $tables
+     *
+     * @return Table[]
      */
-    private function getTables(Config $config): array
+    private function filterTables(
+        array  $tables,
+        ?array $onlyTables,
+        ?array $exceptTables,
+    ): array
     {
-        if (!is_null($config->getOnlyTables())) {
-            return $config->getOnlyTables();
+        if (!is_null($onlyTables)) {
+            return array_filter($tables, function (Table $table) use ($onlyTables): bool {
+                return in_array($table->name, $onlyTables);
+            });
         }
 
-        $sql = <<<SQL
-SELECT TABLE_NAME
-FROM information_schema.tables
-WHERE TABLE_SCHEMA = DATABASE()
-ORDER BY TABLE_NAME
-SQL;
-
-        $stmt = $config->getPdo()->query($sql);
-        assert($stmt instanceof PDOStatement);
-        /** @var string[] $tables */
-        $tables = $stmt
-            ->fetchAll(PDO::FETCH_COLUMN);
-
-        if (is_null($config->getExceptTables())) {
-            return $tables;
+        if (!is_null($exceptTables)) {
+            return array_filter($tables, function (Table $table) use ($exceptTables): bool {
+                return !in_array($table->name, $exceptTables);
+            });
         }
 
-        $exceptTables = $config->getExceptTables();
-        return array_diff($tables, $exceptTables);
+        return $tables;
     }
 }

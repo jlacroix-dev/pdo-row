@@ -10,7 +10,7 @@ final class Filesystem
 {
     public function write(string $file, string $contents): void
     {
-        if (!file_exists($file)) {
+        if (!file_exists(dirname($file))) {
             mkdir(dirname($file), recursive: true);
         }
         file_put_contents($file, $contents);
