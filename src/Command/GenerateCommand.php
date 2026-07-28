@@ -2,18 +2,33 @@
 
 declare(strict_types=1);
 
-namespace JlacroixDev\PdoRow;
+namespace JlacroixDev\PdoRow\Command;
 
+use JlacroixDev\PdoRow\Config;
+use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\ColumnsTableRow;
-use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\TablesTableRow;
+use JlacroixDev\PdoRow\Utils\TemplateRenderer;
 use PDO;
 use PDOStatement;
 use RuntimeException;
 
-final class Command
+final class GenerateCommand implements Command
 {
-    public const int SUCCESS = 0;
-    public const int FAILURE = 1;
+    public function __construct(
+        private TemplateRenderer $renderer,
+    ){
+
+    }
+
+    public static function name(): string
+    {
+        return 'generate';
+    }
+
+    public static function description(): string
+    {
+        return 'Generate Row object to use when querying DB with PDO';
+    }
 
     private function usage(): void
     {
@@ -22,7 +37,7 @@ Description:
   Generate Row object to use when querying DB with PDO
 
 Usage:
-  pdo-row [options]
+  pdo-row generate [options]
 
 Options:
   --configuration=CONFIGURATION     Path to project configuration file, default to 'pdo-row.php'
@@ -31,7 +46,7 @@ Options:
 HELP;
     }
 
-    public function run(): int
+    public function run(array $argv): int
     {
         $options = getopt('', ['configuration::', "help"]);
 
@@ -51,6 +66,7 @@ HELP;
             $workdir = getcwd();
             $configPath = $workdir . '/pdo-row.php';
             if (!file_exists($configPath)) {
+                // todo Call InitCommand
                 echo "Config file not found. Create `pdo-row.php`" . PHP_EOL;
                 return self::FAILURE;
             }
@@ -109,7 +125,7 @@ SQL;
                 );
             }, $rows);
 
-            $code = $this->render($config->getTemplate(), [
+            $code = $this->renderer->render($config->getTemplate(), [
                 'namespace' => $config->getNamespace(),
                 'className' => $className,
                 'columns' => $columns,
@@ -153,17 +169,5 @@ SQL;
 
         $exceptTables = $config->getExceptTables();
         return array_diff($tables, $exceptTables);
-    }
-
-    /**
-     * @param array<string, mixed> $data
-     */
-    private function render(string $template, array $data): string
-    {
-        extract($data, EXTR_SKIP);
-
-        ob_start();
-        include $template;
-        return ob_get_clean();
     }
 }

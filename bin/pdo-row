@@ -3,8 +3,23 @@
 
 declare(strict_types=1);
 
-use JlacroixDev\PdoRow\Command;
+use JlacroixDev\PdoRow\Application;
+use JlacroixDev\PdoRow\Command\GenerateCommand;
+use JlacroixDev\PdoRow\Command\HelpCommand;
+use JlacroixDev\PdoRow\Command\InitCommand;
+use JlacroixDev\PdoRow\Command\VersionCommand;
+use JlacroixDev\PdoRow\Utils\TemplateRenderer;
 
 include $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
 
-exit((new Command())->run());
+$renderer = new TemplateRenderer();
+
+$commands = [
+    new InitCommand($renderer),
+    new GenerateCommand($renderer),
+    new VersionCommand(),
+];
+$commands[] = new HelpCommand($commands);
+$app = new Application($commands);
+
+exit($app->run($argv));

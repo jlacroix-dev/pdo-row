@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow;
 
+use JlacroixDev\PdoRow\Naming\MyNaming;
+use JlacroixDev\PdoRow\Naming\NamingStrategy;
 use LogicException;
 use PDO;
 
@@ -14,7 +16,9 @@ final class Config
     private string $namespace = 'App\\Repository\\PDO\\TableRow';
     private string $template = __DIR__ . '/../templates/class.tpl.php';
     private ?NamingStrategy $namingStrategy = null;
+    /** @var string[]|null */
     private ?array $onlyTables = null;
+    /** @var string[]|null  */
     private ?array $exceptTables = null;
     private ?string $phpVersion = null;
 

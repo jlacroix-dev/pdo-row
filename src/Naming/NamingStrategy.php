@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JlacroixDev\PdoRow;
+namespace JlacroixDev\PdoRow\Naming;
 
 interface NamingStrategy
 {

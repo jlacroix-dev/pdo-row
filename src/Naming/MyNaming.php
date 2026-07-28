@@ -1,6 +1,6 @@
 <?php
 
-namespace JlacroixDev\PdoRow;
+namespace JlacroixDev\PdoRow\Naming;
 
 final class MyNaming implements NamingStrategy
 {

@@ -1,6 +1,6 @@
 <?php
 
-use JlacroixDev\PdoRow\Column;
+use JlacroixDev\PdoRow\Model\Column;
 
 /**
  * @var string $namespace
