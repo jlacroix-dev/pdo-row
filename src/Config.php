@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow;
 
+use LogicException;
 use PDO;
 
 final class Config
@@ -13,6 +14,8 @@ final class Config
     private string $namespace = 'App\\Repository\\PDO\\TableRow';
     private string $template = __DIR__ . '/../templates/class.php';
     private ?NamingStrategy $namingStrategy = null;
+    private ?array $onlyTables = null;
+    private ?array $exceptTables = null;
     private ?string $phpVersion = null;
 
     public function __construct(PDO $pdo)
@@ -49,6 +52,31 @@ final class Config
         return $this;
     }
 
+    /**
+     * @param string[] $tables
+     */
+    public function onlyTables(array $tables): self
+    {
+        if ($this->exceptTables !== null) {
+            throw new LogicException('Cannot use onlyTables() and exceptTables() together.');
+        }
+        $this->onlyTables = $tables;
+        return $this;
+    }
+
+    /**
+     * @param string[] $tables
+     */
+    public function exceptTables(array $tables): self
+    {
+        if ($this->onlyTables !== null) {
+            throw new LogicException('Cannot use onlyTables() and exceptTables() together.');
+        }
+        $this->exceptTables = $tables;
+        return $this;
+    }
+
+
     public function withPhpVersion(string $phpVersion): self
     {
         $this->phpVersion = $phpVersion;
@@ -78,6 +106,22 @@ final class Config
     public function getNamingStrategy(): NamingStrategy
     {
         return $this->namingStrategy ?? new MyNaming();
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getOnlyTables(): ?array
+    {
+        return $this->onlyTables;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getExceptTables(): ?array
+    {
+        return $this->exceptTables;
     }
 
     public function getPhpVersion(): string

@@ -8,6 +8,7 @@ use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\ColumnsTableRow;
 use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\TablesTableRow;
 use PDO;
 use PDOStatement;
+use RuntimeException;
 
 final class Command
 {
@@ -77,21 +78,9 @@ HELP;
 
         echo "Start generating..." . PHP_EOL;
 
-        $sql = <<<SQL
-SELECT *
-FROM information_schema.tables
-WHERE TABLE_SCHEMA = DATABASE()
-ORDER BY TABLE_NAME
-SQL;
+        $tables = $this->getTables($config);
 
-        $stmt = $config->getPdo()->query($sql);
-        assert($stmt instanceof PDOStatement);
-        /** @var TablesTableRow[] $tables */
-        $tables = $stmt
-            ->fetchAll(PDO::FETCH_CLASS, TablesTableRow::class);
-
-        foreach ($tables as $table) {
-            $tableName = $table->TABLE_NAME;
+        foreach ($tables as $tableName) {
 
             $sql = <<<SQL
 SELECT *
@@ -105,6 +94,9 @@ SQL;
             $stmt->execute([$tableName]);
             /** @var ColumnsTableRow[] $rows */
             $rows = $stmt->fetchAll(PDO::FETCH_CLASS, ColumnsTableRow::class);
+            if (count($rows) === 0) {
+                throw new RuntimeException("Table $tableName does not exist");
+            }
 
             $className = $config->getNamingStrategy()->class($tableName);
             $columns = array_map(function (ColumnsTableRow $row): Column {
@@ -131,6 +123,36 @@ SQL;
         }
 
         return self::SUCCESS;
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getTables(Config $config): array
+    {
+        if (!is_null($config->getOnlyTables())) {
+            return $config->getOnlyTables();
+        }
+
+        $sql = <<<SQL
+SELECT TABLE_NAME
+FROM information_schema.tables
+WHERE TABLE_SCHEMA = DATABASE()
+ORDER BY TABLE_NAME
+SQL;
+
+        $stmt = $config->getPdo()->query($sql);
+        assert($stmt instanceof PDOStatement);
+        /** @var string[] $tables */
+        $tables = $stmt
+            ->fetchAll(PDO::FETCH_COLUMN);
+
+        if (is_null($config->getExceptTables())) {
+            return $tables;
+        }
+
+        $exceptTables = $config->getExceptTables();
+        return array_diff($tables, $exceptTables);
     }
 
     /**
