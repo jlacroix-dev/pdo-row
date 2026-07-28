@@ -10,9 +10,9 @@ use PDO;
 
 final class SqliteSchemaInspector implements SchemaInspector
 {
-    public function supports(PDO $pdo): bool
+    public function driverNameSupported(): string
     {
-        return $pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
+        return 'sqlite';
     }
 
     public function inspect(PDO $pdo): array
@@ -25,11 +25,12 @@ FROM sqlite_master
 WHERE type = 'table'
 AND name NOT LIKE 'sqlite_%'
 SQL;
-        $statement = $pdo->query(
-            $sql
-        );
+        $stmt = $pdo->query($sql);
+        assert($stmt !== false);
 
-        foreach ($statement->fetchAll(PDO::FETCH_COLUMN) as $name) {
+        /** @var string[] $names */
+        $names = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($names as $name) {
             $tables[] = new Table(
                 name: $name,
                 columns: $this->columns($pdo, $name),
@@ -44,17 +45,26 @@ SQL;
      */
     private function columns(PDO $pdo, string $table): array
     {
-        $statement = $pdo->query(
+        $stmt = $pdo->query(
             "PRAGMA table_info('{$table}')"
         );
+        assert($stmt !== false);
 
         $columns = [];
 
-        foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $column) {
+        /**
+         * @var array{
+         *     name: string,
+         *     type: string,
+         *     notnull: string,
+         * }[] $rows
+         */
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as $row) {
             $columns[] = new Column(
-                name: $column['name'],
-                type: $column['type'],
-                nullable: (int) $column['notnull'] === 0,
+                name: $row['name'],
+                type: $row['type'],
+                nullable: (int) $row['notnull'] === 0,
             );
         }
 

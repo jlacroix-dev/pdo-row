@@ -11,7 +11,7 @@ namespace JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow;
  *
  * DO NOT EDIT MANUALLY.
  */
-class ColumnsTableRow
+final class ColumnsTableRow
 {
     // varchar(64) NOT NULL
     public string $TABLE_CATALOG;

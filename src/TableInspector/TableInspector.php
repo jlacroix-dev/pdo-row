@@ -12,7 +12,7 @@ final class TableInspector
      * @param SchemaInspector[] $inspectors
      */
     public function __construct(
-        private array $inspectors,
+        private readonly array $inspectors,
     )
     {
     }
@@ -22,17 +22,14 @@ final class TableInspector
      */
     public function inspect(PDO $pdo): array
     {
+        /** @var string $driverName */
+        $driverName = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
         foreach ($this->inspectors as $inspector) {
-            if ($inspector->supports($pdo)) {
+            if ($inspector->driverNameSupported() === $driverName) {
                 return $inspector->inspect($pdo);
             }
         }
 
-        throw new RuntimeException(
-            sprintf(
-                'Unsupported PDO driver: %s',
-                $pdo->getAttribute(PDO::ATTR_DRIVER_NAME)
-            )
-        );
+        throw new RuntimeException("Unsupported PDO driver: $driverName");
     }
 }

@@ -12,9 +12,9 @@ use PDO;
 
 final class MysqlSchemaInspector implements SchemaInspector
 {
-    public function supports(PDO $pdo): bool
+    public function driverNameSupported(): string
     {
-        return $pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql';
+        return 'mysql';
     }
 
     public function inspect(PDO $pdo): array
@@ -25,11 +25,12 @@ FROM information_schema.tables
 WHERE TABLE_SCHEMA = DATABASE()
 ORDER BY TABLE_NAME
 SQL;
-        $query = $pdo->query($sql);
+        $stmt = $pdo->query($sql);
+        assert($stmt !== false);
 
         $tables = [];
         /** @var TablesTableRow[] $rows */
-        $rows = $query->fetchAll(PDO::FETCH_CLASS, TablesTableRow::class);
+        $rows = $stmt->fetchAll(PDO::FETCH_CLASS, TablesTableRow::class);
         foreach ($rows as $row) {
             $tables[] = new Table(
                 name: $row->TABLE_NAME,
@@ -61,7 +62,7 @@ SQL;
         $rows = $stmt->fetchAll(PDO::FETCH_CLASS, ColumnsTableRow::class);
         foreach ($rows as $row) {
             $columns[] = new Column(
-                name: $row->COLUMN_NAME,
+                name: $row->COLUMN_NAME ?? '',
                 type: $row->COLUMN_TYPE,
                 nullable: $row->IS_NULLABLE === 'YES',
             );

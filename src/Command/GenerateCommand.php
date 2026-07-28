@@ -126,6 +126,8 @@ HELP;
 
     /**
      * @param Table[] $tables
+     * @param string[]|null $onlyTables
+     * @param string[]|null $exceptTables
      *
      * @return Table[]
      */
@@ -137,13 +139,13 @@ HELP;
     {
         if (!is_null($onlyTables)) {
             return array_filter($tables, function (Table $table) use ($onlyTables): bool {
-                return in_array($table->name, $onlyTables);
+                return in_array($table->name, $onlyTables, true);
             });
         }
 
         if (!is_null($exceptTables)) {
             return array_filter($tables, function (Table $table) use ($exceptTables): bool {
-                return !in_array($table->name, $exceptTables);
+                return !in_array($table->name, $exceptTables, true);
             });
         }
 
