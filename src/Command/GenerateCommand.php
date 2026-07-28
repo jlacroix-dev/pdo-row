@@ -7,6 +7,7 @@ namespace JlacroixDev\PdoRow\Command;
 use JlacroixDev\PdoRow\Config;
 use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\ColumnsTableRow;
+use JlacroixDev\PdoRow\Utils\Filesystem;
 use JlacroixDev\PdoRow\Utils\TemplateRenderer;
 use JlacroixDev\PdoRow\Version;
 use PDO;
@@ -16,8 +17,10 @@ use RuntimeException;
 final class GenerateCommand implements Command
 {
     public function __construct(
-        private TemplateRenderer $renderer,
-    ){
+        private readonly TemplateRenderer $renderer,
+        private readonly Filesystem $filesystem,
+    )
+    {
 
     }
 
@@ -59,14 +62,14 @@ HELP;
         if (array_key_exists('configuration', $options)) {
             $configPath = $options['configuration'];
             assert(is_string($configPath));
-            if (!file_exists($configPath)) {
+            if (!$this->filesystem->exists($configPath)) {
                 echo "Config file '$configPath' not found" . PHP_EOL;
                 return self::FAILURE;
             }
         } else {
             $workdir = getcwd();
             $configPath = $workdir . '/pdo-row.php';
-            if (!file_exists($configPath)) {
+            if (!$this->filesystem->exists($configPath)) {
                 // todo Call InitCommand
                 echo "Config file not found. Create `pdo-row.php`" . PHP_EOL;
                 return self::FAILURE;
@@ -85,13 +88,7 @@ HELP;
         echo $config . PHP_EOL;
 
         $directory = $config->getDirectory();
-        if (!file_exists($directory)) {
-            mkdir($directory, 0777, true); // TODO: what permission?
-        }
-        if (!is_dir($directory)) {
-            echo "'$directory' is not a directory" . PHP_EOL;
-            return self::FAILURE;
-        }
+        $this->filesystem->ensureDirectory($directory);
 
         echo "Start generating..." . PHP_EOL;
 
@@ -135,7 +132,7 @@ SQL;
 
             $outputDir = $config->getDirectory();
             $outputFile = "{$outputDir}/{$className}.php";
-            file_put_contents($outputFile, $code);
+            $this->filesystem->write($outputFile, $code);
 
             echo "Generated {$outputFile}\n";
         }

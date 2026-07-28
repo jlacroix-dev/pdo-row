@@ -4,8 +4,12 @@ declare(strict_types=1);
 namespace JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow;
 
 /**
- * This file is generated automatically by jlacroix-dev/pdo-row
- */
+* This file was generated automatically.
+*
+* Generator: jlacroix-dev/pdo-row
+* Version: dev*
+* DO NOT EDIT MANUALLY.
+*/
 class ColumnsTableRow
 {
     // varchar(64) NOT NULL

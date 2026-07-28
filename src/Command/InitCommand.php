@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow\Command;
 
+use JlacroixDev\PdoRow\Utils\Filesystem;
 use JlacroixDev\PdoRow\Utils\TemplateRenderer;
 
 final class InitCommand implements Command
 {
     public function __construct(
         private TemplateRenderer $renderer,
+        private Filesystem $filesystem,
     ){
 
     }
@@ -28,13 +30,13 @@ final class InitCommand implements Command
     {
         $filename = getcwd() . '/pdo-row.php';
 
-        if (is_file($filename)) {
+        if ($this->filesystem->exists($filename)) {
             echo 'Configuration already exists.' . PHP_EOL;
             return Command::FAILURE;
         }
 
         $content = $this->renderer->render(__DIR__ . '/../templates/config.tpl.php');
-        file_put_contents($filename, $content);
+        $this->filesystem->write($filename, $content);
 
         echo "Created {$filename}\n";
 
