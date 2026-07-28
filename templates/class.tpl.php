@@ -3,6 +3,7 @@
 use JlacroixDev\PdoRow\Model\Column;
 
 /**
+ * @var string $version
  * @var string $namespace
  * @var string $className
  * @var Column[] $columns
@@ -16,8 +17,13 @@ declare(strict_types=1);
 namespace <?= $namespace ?>;
 
 /**
- * This file is generated automatically by jlacroix-dev/pdo-row
- */
+* This file was generated automatically.
+*
+* Generator: jlacroix-dev/pdo-row
+* Version: <?= $version ?>
+*
+* DO NOT EDIT MANUALLY.
+*/
 class <?= $className . PHP_EOL ?>
 {
 <?php foreach ($columns as $column): ?>

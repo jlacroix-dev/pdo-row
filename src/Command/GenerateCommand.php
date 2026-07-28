@@ -8,6 +8,7 @@ use JlacroixDev\PdoRow\Config;
 use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\ColumnsTableRow;
 use JlacroixDev\PdoRow\Utils\TemplateRenderer;
+use JlacroixDev\PdoRow\Version;
 use PDO;
 use PDOStatement;
 use RuntimeException;
@@ -126,6 +127,7 @@ SQL;
             }, $rows);
 
             $code = $this->renderer->render($config->getTemplate(), [
+                'version' => Version::VERSION,
                 'namespace' => $config->getNamespace(),
                 'className' => $className,
                 'columns' => $columns,

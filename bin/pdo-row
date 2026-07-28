@@ -9,6 +9,7 @@ use JlacroixDev\PdoRow\Command\HelpCommand;
 use JlacroixDev\PdoRow\Command\InitCommand;
 use JlacroixDev\PdoRow\Command\VersionCommand;
 use JlacroixDev\PdoRow\Utils\TemplateRenderer;
+use JlacroixDev\PdoRow\Version;
 
 include $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
 
@@ -17,7 +18,7 @@ $renderer = new TemplateRenderer();
 $commands = [
     new InitCommand($renderer),
     new GenerateCommand($renderer),
-    new VersionCommand(),
+    new VersionCommand(Version::VERSION),
 ];
 $commands[] = new HelpCommand($commands);
 $app = new Application($commands);

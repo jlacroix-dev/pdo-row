@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow\Command;
 
-use JlacroixDev\PdoRow\Version;
-
 final class VersionCommand implements Command
 {
+    public function __construct(
+        private readonly string $version,
+    )
+    {
+    }
 
     public static function name(): string
     {
@@ -21,7 +24,7 @@ final class VersionCommand implements Command
 
     public function run(array $argv): int
     {
-        echo 'pdo-row ' . Version::VERSION . PHP_EOL;
+        echo 'pdo-row ' . $this->version . PHP_EOL;
         return Command::SUCCESS;
     }
 }
