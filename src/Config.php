@@ -12,7 +12,7 @@ final class Config
     private PDO $pdo;
     private string $directory = 'src/Repository/PDO/TableRow';
     private string $namespace = 'App\\Repository\\PDO\\TableRow';
-    private string $template = __DIR__ . '/../templates/class.php';
+    private string $template = __DIR__ . '/../templates/class.tpl.php';
     private ?NamingStrategy $namingStrategy = null;
     private ?array $onlyTables = null;
     private ?array $exceptTables = null;
