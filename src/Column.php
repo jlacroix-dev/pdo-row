@@ -10,7 +10,7 @@ final class Column
         public string $name,
         public string $type,
         public bool   $nullable,
-        public string $default,
+        public ?string $default,
         public string $comment,
     )
     {

@@ -23,7 +23,7 @@ class <?= $className . PHP_EOL ?>
 <?php foreach ($columns as $column): ?>
     // <?= $column->type ?> <?= $column->nullable ? 'NULL' : 'NOT NULL' ?>
 
-    public readonly <?= $column->nullable ? '?string' : 'string' ?> $<?= $column->name ?>;
+    public <?= $column->nullable ? '?string' : 'string' ?> $<?= $column->name ?>;
 
 <?php endforeach; ?>
 }

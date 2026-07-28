@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow;
 
+use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\ColumnsTableRow;
+use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\TablesTableRow;
 use PDO;
+use PDOStatement;
 
 final class Command
 {
@@ -75,22 +78,23 @@ HELP;
         echo "Start generating..." . PHP_EOL;
 
         $sql = <<<SQL
-SELECT TABLE_NAME
+SELECT *
 FROM information_schema.tables
 WHERE TABLE_SCHEMA = DATABASE()
 ORDER BY TABLE_NAME
 SQL;
-        $tables = $config->getPdo()->query($sql)
-            ->fetchAll(PDO::FETCH_COLUMN);
+
+        $stmt = $config->getPdo()->query($sql);
+        assert($stmt instanceof PDOStatement);
+        /** @var TablesTableRow[] $tables */
+        $tables = $stmt
+            ->fetchAll(PDO::FETCH_CLASS, TablesTableRow::class);
 
         foreach ($tables as $table) {
+            $tableName = $table->TABLE_NAME;
+
             $sql = <<<SQL
-SELECT
-    COLUMN_NAME,
-    DATA_TYPE,
-    COLUMN_TYPE,
-    IS_NULLABLE,
-    COLUMN_COMMENT
+SELECT *
 FROM information_schema.columns
 WHERE TABLE_SCHEMA = DATABASE()
 AND TABLE_NAME = ?
@@ -98,17 +102,18 @@ ORDER BY ORDINAL_POSITION
 SQL;
 
             $stmt = $config->getPdo()->prepare($sql);
-            $stmt->execute([$table]);
-            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->execute([$tableName]);
+            /** @var ColumnsTableRow[] $rows */
+            $rows = $stmt->fetchAll(PDO::FETCH_CLASS, ColumnsTableRow::class);
 
-            $className = $config->getNamingStrategy()->class($table);
-            $columns = array_map(function (array $row): Column {
+            $className = $config->getNamingStrategy()->class($tableName);
+            $columns = array_map(function (ColumnsTableRow $row): Column {
                 return new Column(
-                    $row['COLUMN_NAME'],
-                    $row['COLUMN_TYPE'],
-                    $row['IS_NULLABLE'] === 'YES',
-                    '',
-                    $row['COLUMN_COMMENT'],
+                    $row->COLUMN_NAME ?? '',
+                    $row->COLUMN_TYPE,
+                    $row->IS_NULLABLE === 'YES',
+                    $row->COLUMN_DEFAULT,
+                    $row->COLUMN_COMMENT,
                 );
             }, $rows);
 
@@ -128,6 +133,9 @@ SQL;
         return self::SUCCESS;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function render(string $template, array $data): string
     {
         extract($data, EXTR_SKIP);
