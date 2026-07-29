@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow\Command;
 
+use Exception;
 use JlacroixDev\PdoRow\Config;
 use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Model\Table;
@@ -63,7 +64,9 @@ HELP;
 
         if (array_key_exists('configuration', $options)) {
             $configPath = $options['configuration'];
-            assert(is_string($configPath));
+            if (!is_string($configPath)) {
+                throw new Exception('Configuration is not a string');
+            }
             if (!$this->filesystem->exists($configPath)) {
                 echo "Config file '$configPath' not found" . PHP_EOL;
                 return self::FAILURE;
@@ -80,7 +83,7 @@ HELP;
 
         $configPath = realpath($configPath);
         echo "Note: Using configuration file $configPath" . PHP_EOL;
-        $config = require_once $configPath;
+        $config = require $configPath;
 
         if (!$config instanceof Config) {
             echo "Config must be an instance of PDORowConfig" . PHP_EOL;

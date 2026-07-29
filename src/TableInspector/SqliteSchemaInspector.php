@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow\TableInspector;
 
+use Exception;
 use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Model\Table;
 use PDO;
@@ -26,7 +27,9 @@ WHERE type = 'table'
 AND name NOT LIKE 'sqlite_%'
 SQL;
         $stmt = $pdo->query($sql);
-        assert($stmt !== false);
+        if ($stmt === false) {
+            throw new Exception('Fail to query DB');
+        }
 
         /** @var string[] $names */
         $names = $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -48,7 +51,9 @@ SQL;
         $stmt = $pdo->query(
             "PRAGMA table_info('{$table}')"
         );
-        assert($stmt !== false);
+        if ($stmt === false) {
+            throw new Exception('Fail to query DB');
+        }
 
         $columns = [];
 

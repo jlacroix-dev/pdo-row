@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow\TableInspector;
 
+use Exception;
 use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Model\Table;
 use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\ColumnsTableRow;
@@ -26,7 +27,9 @@ WHERE TABLE_SCHEMA = DATABASE()
 ORDER BY TABLE_NAME
 SQL;
         $stmt = $pdo->query($sql);
-        assert($stmt !== false);
+        if ($stmt === false) {
+            throw new Exception('Fail to query DB');
+        }
 
         $tables = [];
         /** @var TablesTableRow[] $rows */
