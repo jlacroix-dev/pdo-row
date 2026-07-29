@@ -11,6 +11,34 @@ namespace JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow;
  *
  * DO NOT EDIT MANUALLY.
  */
+
+/**
+ * Use with PDO::FETCH_ASSOC
+ * @phpstan-type ColumnsTableRowAssoc array{
+ *      TABLE_CATALOG: string,
+ *      TABLE_SCHEMA: string,
+ *      TABLE_NAME: string,
+ *      COLUMN_NAME: ?string,
+ *      ORDINAL_POSITION: string,
+ *      COLUMN_DEFAULT: ?string,
+ *      IS_NULLABLE: string,
+ *      DATA_TYPE: ?string,
+ *      CHARACTER_MAXIMUM_LENGTH: ?string,
+ *      CHARACTER_OCTET_LENGTH: ?string,
+ *      NUMERIC_PRECISION: ?string,
+ *      NUMERIC_SCALE: ?string,
+ *      DATETIME_PRECISION: ?string,
+ *      CHARACTER_SET_NAME: ?string,
+ *      COLLATION_NAME: ?string,
+ *      COLUMN_TYPE: string,
+ *      COLUMN_KEY: string,
+ *      EXTRA: ?string,
+ *      PRIVILEGES: ?string,
+ *      COLUMN_COMMENT: string,
+ *      GENERATION_EXPRESSION: string,
+ *      SRS_ID: ?string,
+ * }
+ */
 final class ColumnsTableRow
 {
     // varchar(64) NOT NULL

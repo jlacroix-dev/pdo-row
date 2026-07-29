@@ -24,6 +24,15 @@ namespace <?= $namespace ?>;
  *
  * DO NOT EDIT MANUALLY.
  */
+
+/**
+ * Use with PDO::FETCH_ASSOC
+ * @phpstan-type <?= $className ?>Assoc array{
+<?php foreach ($columns as $column): ?>
+ *      <?= $column->name ?>: <?= $column->nullable ? '?string' : 'string' ?>,
+<?php endforeach; ?>
+ * }
+ */
 final class <?= $className . PHP_EOL ?>
 {
 <?php foreach ($columns as $column): ?>
