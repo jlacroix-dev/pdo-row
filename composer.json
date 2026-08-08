@@ -48,7 +48,17 @@
     "phpstan": "phpstan analyse",
     "rector": "rector",
     "phpcs": "phpcs",
-    "phpcbf": "phpcbf"
+    "phpcbf": "phpcbf",
+    "ci": [
+      "@phpcs",
+      "rector process --dry-run",
+      "@phpstan",
+      "@test"
+    ],
+    "fix": [
+      "@phpcbf",
+      "@rector"
+    ]
   },
   "config": {
     "sort-packages": true

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace JlacroixDev\PdoRow\Utils;
+namespace JlacroixDev\PdoRow\Filesystem;
 
 use RuntimeException;
 
-final class Filesystem
+final class LocalFilesystem implements Filesystem
 {
     public function write(string $file, string $contents): void
     {

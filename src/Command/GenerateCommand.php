@@ -6,16 +6,13 @@ namespace JlacroixDev\PdoRow\Command;
 
 use Exception;
 use JlacroixDev\PdoRow\Config;
+use JlacroixDev\PdoRow\Filesystem\Filesystem;
+use JlacroixDev\PdoRow\Generation\GeneratedFile;
+use JlacroixDev\PdoRow\Generation\GeneratedFileWriter;
 use JlacroixDev\PdoRow\Generation\TableFilter;
-use JlacroixDev\PdoRow\Model\Column;
-use JlacroixDev\PdoRow\Model\Table;
 use JlacroixDev\PdoRow\TableInspector\TableInspector;
 use JlacroixDev\PdoRow\Template\TemplateRenderer;
-use JlacroixDev\PdoRow\Utils\Filesystem;
 use JlacroixDev\PdoRow\Version;
-use PDO;
-use PDOStatement;
-use RuntimeException;
 
 final class GenerateCommand implements Command
 {
@@ -23,6 +20,7 @@ final class GenerateCommand implements Command
         private readonly TableFilter $tableFilter,
         private readonly TableInspector $tableInspector,
         private readonly TemplateRenderer $renderer,
+        private readonly GeneratedFileWriter $writer,
         private readonly Filesystem $filesystem,
     ) {
     }
@@ -106,8 +104,10 @@ HELP;
             $config->getExceptTables(),
         );
 
+        $files = [];
         foreach ($tables as $table) {
             $className = $config->getNamingStrategy()->class($table->name);
+            $filename = "{$className}.php";
 
             $code = $this->renderer->render($config->getTemplate(), [
                 'version' => Version::VERSION,
@@ -116,12 +116,13 @@ HELP;
                 'columns' => $table->columns,
             ]);
 
-            $outputDir = $config->getDirectory();
-            $outputFile = "{$outputDir}/{$className}.php";
-            $this->filesystem->write($outputFile, $code);
-
-            echo "Generated {$outputFile}\n";
+            $files[] = new GeneratedFile($filename, $code);
         }
+
+        $this->writer->write(
+            $config->getDirectory(),
+            $files,
+        );
 
         return self::SUCCESS;
     }

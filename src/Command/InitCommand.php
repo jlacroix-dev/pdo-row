@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow\Command;
 
+use JlacroixDev\PdoRow\Filesystem\Filesystem;
+use JlacroixDev\PdoRow\Filesystem\LocalFilesystem;
 use JlacroixDev\PdoRow\Template\TemplateRenderer;
-use JlacroixDev\PdoRow\Utils\Filesystem;
 
 final class InitCommand implements Command
 {

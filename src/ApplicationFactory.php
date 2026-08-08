@@ -8,12 +8,13 @@ use JlacroixDev\PdoRow\Command\GenerateCommand;
 use JlacroixDev\PdoRow\Command\HelpCommand;
 use JlacroixDev\PdoRow\Command\InitCommand;
 use JlacroixDev\PdoRow\Command\VersionCommand;
+use JlacroixDev\PdoRow\Filesystem\LocalFilesystem;
+use JlacroixDev\PdoRow\Generation\GeneratedFileWriter;
 use JlacroixDev\PdoRow\Generation\TableFilter;
 use JlacroixDev\PdoRow\TableInspector\MysqlSchemaInspector;
 use JlacroixDev\PdoRow\TableInspector\SqliteSchemaInspector;
 use JlacroixDev\PdoRow\TableInspector\TableInspector;
 use JlacroixDev\PdoRow\Template\TemplateRenderer;
-use JlacroixDev\PdoRow\Utils\Filesystem;
 
 final class ApplicationFactory
 {
@@ -26,11 +27,18 @@ final class ApplicationFactory
         ]);
 
         $renderer = new TemplateRenderer();
-        $filesystem = new Filesystem();
+        $filesystem = new LocalFilesystem();
+        $writer = new GeneratedFileWriter($filesystem);
 
         $commands = [
             new InitCommand($renderer, $filesystem),
-            new GenerateCommand($tableFilter, $tableInspector, $renderer, $filesystem),
+            new GenerateCommand(
+                $tableFilter,
+                $tableInspector,
+                $renderer,
+                $writer,
+                $filesystem
+            ),
             new VersionCommand(Version::VERSION),
         ];
         $commands[] = new HelpCommand($commands);
