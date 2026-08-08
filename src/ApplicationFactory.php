@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JlacroixDev\PdoRow;
 
 use JlacroixDev\PdoRow\Command\GenerateCommand;
+use JlacroixDev\PdoRow\Command\GenerateOptionsParser;
 use JlacroixDev\PdoRow\Command\HelpCommand;
 use JlacroixDev\PdoRow\Command\InitCommand;
 use JlacroixDev\PdoRow\Command\VersionCommand;
@@ -33,6 +34,7 @@ final class ApplicationFactory
         $commands = [
             new InitCommand($renderer, $filesystem),
             new GenerateCommand(
+                new GenerateOptionsParser(),
                 $tableFilter,
                 $tableInspector,
                 $renderer,

@@ -17,6 +17,7 @@ use JlacroixDev\PdoRow\Version;
 final class GenerateCommand implements Command
 {
     public function __construct(
+        private readonly GenerateOptionsParser $optionsParser,
         private readonly TableFilter $tableFilter,
         private readonly TableInspector $tableInspector,
         private readonly TemplateRenderer $renderer,
@@ -53,30 +54,29 @@ HELP;
 
     public function run(array $argv): int
     {
-        $options = getopt('', ['configuration::', "help"]);
+        $options = $this->optionsParser->parse();
 
-        if (array_key_exists('help', $options)) {
+        if ($options->help) {
             $this->usage();
             return self::SUCCESS;
         }
 
-        if (array_key_exists('configuration', $options)) {
-            $configPath = $options['configuration'];
-            if (!is_string($configPath)) {
-                throw new Exception('Configuration is not a string');
-            }
-            if (!$this->filesystem->exists($configPath)) {
-                echo "Config file '$configPath' not found" . PHP_EOL;
-                return self::FAILURE;
-            }
-        } else {
+        $configPath = $options->configuration;
+        if (is_null($configPath)) {
             $workdir = getcwd();
             $configPath = $workdir . '/pdo-row.php';
             if (!$this->filesystem->exists($configPath)) {
-                // todo Call InitCommand
-                echo "Config file not found. Create `pdo-row.php`" . PHP_EOL;
+                echo <<<TXT
+"pdo-row.php" not found.
+Run `pdo-row init` first.
+TXT;
                 return self::FAILURE;
             }
+        }
+
+        if (!$this->filesystem->exists($configPath)) {
+            echo "Config file '$configPath' not found" . PHP_EOL;
+            return self::FAILURE;
         }
 
         $configPath = realpath($configPath);
