@@ -8,6 +8,7 @@ use JlacroixDev\PdoRow\Command\GenerateCommand;
 use JlacroixDev\PdoRow\Command\HelpCommand;
 use JlacroixDev\PdoRow\Command\InitCommand;
 use JlacroixDev\PdoRow\Command\VersionCommand;
+use JlacroixDev\PdoRow\Generation\TableFilter;
 use JlacroixDev\PdoRow\TableInspector\MysqlSchemaInspector;
 use JlacroixDev\PdoRow\TableInspector\SqliteSchemaInspector;
 use JlacroixDev\PdoRow\TableInspector\TableInspector;
@@ -18,6 +19,7 @@ final class ApplicationFactory
 {
     public static function create(): Application
     {
+        $tableFilter = new TableFilter();
         $tableInspector = new TableInspector([
             new MysqlSchemaInspector(),
             new SqliteSchemaInspector(),
@@ -28,7 +30,7 @@ final class ApplicationFactory
 
         $commands = [
             new InitCommand($renderer, $filesystem),
-            new GenerateCommand($tableInspector, $renderer, $filesystem),
+            new GenerateCommand($tableFilter, $tableInspector, $renderer, $filesystem),
             new VersionCommand(Version::VERSION),
         ];
         $commands[] = new HelpCommand($commands);

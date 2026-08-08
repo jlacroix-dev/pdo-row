@@ -6,6 +6,7 @@ namespace JlacroixDev\PdoRow\Command;
 
 use Exception;
 use JlacroixDev\PdoRow\Config;
+use JlacroixDev\PdoRow\Generation\TableFilter;
 use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Model\Table;
 use JlacroixDev\PdoRow\TableInspector\TableInspector;
@@ -19,6 +20,7 @@ use RuntimeException;
 final class GenerateCommand implements Command
 {
     public function __construct(
+        private readonly TableFilter $tableFilter,
         private readonly TableInspector   $tableInspector,
         private readonly TemplateRenderer $renderer,
         private readonly Filesystem       $filesystem,
@@ -100,7 +102,7 @@ HELP;
         $tables = $this->tableInspector
             ->inspect($config->getPdo());
 
-        $tables = $this->filterTables(
+        $tables = $this->tableFilter->filter(
             $tables,
             $config->getOnlyTables(),
             $config->getExceptTables(),
@@ -125,33 +127,5 @@ HELP;
         }
 
         return self::SUCCESS;
-    }
-
-    /**
-     * @param Table[] $tables
-     * @param string[]|null $onlyTables
-     * @param string[]|null $exceptTables
-     *
-     * @return Table[]
-     */
-    private function filterTables(
-        array  $tables,
-        ?array $onlyTables,
-        ?array $exceptTables,
-    ): array
-    {
-        if (!is_null($onlyTables)) {
-            return array_filter($tables, function (Table $table) use ($onlyTables): bool {
-                return in_array($table->name, $onlyTables, true);
-            });
-        }
-
-        if (!is_null($exceptTables)) {
-            return array_filter($tables, function (Table $table) use ($exceptTables): bool {
-                return !in_array($table->name, $exceptTables, true);
-            });
-        }
-
-        return $tables;
     }
 }

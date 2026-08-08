@@ -13,7 +13,7 @@ class MyNamingTest extends TestCase
     {
         $naming = new MyNaming();
         $actual = $naming->class($table);
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     public static function dataProvider_testClass(): array

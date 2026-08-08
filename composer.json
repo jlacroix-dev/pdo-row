@@ -1,37 +1,53 @@
 {
   "name": "jlacroix-dev/pdo-row",
   "description": "Generate typed class for PDO fetchObject",
+  "type": "library",
   "license": [
     "MIT"
   ],
-  "type": "library",
   "keywords": [
     "dev",
     "pdo",
     "row",
     "dto"
   ],
-  "autoload": {
-    "psr-4": {
-      "JlacroixDev\\PdoRow\\": "src/"
-    }
-  },
+  "homepage": "https://github.com/jlacroix-dev/pdo-row",
   "authors": [
     {
       "name": "Jonathan Lacroix",
       "email": "jlacroix.dev@gmail.com"
     }
   ],
-  "bin": [
-    "bin/pdo-row"
-  ],
   "require": {
     "ext-pdo": "*"
   },
   "require-dev": {
-    "rector/rector": "^2.5",
     "phpstan/phpstan": "2.2.5",
+    "phpstan/phpstan-phpunit": "^2.0",
     "phpstan/phpstan-strict-rules": "^2.0",
-    "phpunit/phpunit": "^13.3"
+    "phpunit/phpunit": "^13.3",
+    "rector/rector": "^2.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "JlacroixDev\\PdoRow\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Unit\\": "tests/Unit/",
+      "Tests\\Integration\\": "tests/Integration/"
+    }
+  },
+  "bin": [
+    "bin/pdo-row"
+  ],
+  "scripts": {
+    "test": "phpunit",
+    "phpstan": "phpstan analyse",
+    "rector": "rector"
+  },
+  "config": {
+    "sort-packages": true
   }
 }

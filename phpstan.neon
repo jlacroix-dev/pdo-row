@@ -3,5 +3,13 @@ parameters:
 	paths:
 		- src
 		- tests
+	ignoreErrors:
+	    -
+	        identifier: missingType.iterableValue
+	        paths:
+	            - tests/**
+	        message: '#::dataProvider[^(\s]*\(\)#'
 includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
     - vendor/phpstan/phpstan-strict-rules/rules.neon
