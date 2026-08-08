@@ -11,4 +11,6 @@ interface Filesystem
     public function exists(string $file): bool;
 
     public function ensureDirectory(string $directory): void;
+
+    public function require(string $file): mixed;
 }

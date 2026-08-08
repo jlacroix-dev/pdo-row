@@ -33,4 +33,9 @@ final class LocalFilesystem implements Filesystem
             );
         }
     }
+
+    public function require(string $file): mixed
+    {
+        return require $file;
+    }
 }

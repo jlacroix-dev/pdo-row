@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow\Command;
 
-use Exception;
-use JlacroixDev\PdoRow\Config;
+use JlacroixDev\PdoRow\Config\ConfigLoader;
+use JlacroixDev\PdoRow\Console\Output;
 use JlacroixDev\PdoRow\Filesystem\Filesystem;
 use JlacroixDev\PdoRow\Generation\GeneratedFile;
 use JlacroixDev\PdoRow\Generation\GeneratedFileWriter;
@@ -18,11 +18,13 @@ final class GenerateCommand implements Command
 {
     public function __construct(
         private readonly GenerateOptionsParser $optionsParser,
+        private readonly ConfigLoader $configLoader,
         private readonly TableFilter $tableFilter,
         private readonly TableInspector $tableInspector,
         private readonly TemplateRenderer $renderer,
         private readonly GeneratedFileWriter $writer,
         private readonly Filesystem $filesystem,
+        private readonly Output $output,
     ) {
     }
 
@@ -61,39 +63,14 @@ HELP;
             return self::SUCCESS;
         }
 
-        $configPath = $options->configuration;
-        if (is_null($configPath)) {
-            $workdir = getcwd();
-            $configPath = $workdir . '/pdo-row.php';
-            if (!$this->filesystem->exists($configPath)) {
-                echo <<<TXT
-"pdo-row.php" not found.
-Run `pdo-row init` first.
-TXT;
-                return self::FAILURE;
-            }
-        }
+        $config = $this->configLoader->load($options->configuration);
 
-        if (!$this->filesystem->exists($configPath)) {
-            echo "Config file '$configPath' not found" . PHP_EOL;
-            return self::FAILURE;
-        }
-
-        $configPath = realpath($configPath);
-        echo "Note: Using configuration file $configPath" . PHP_EOL;
-        $config = require $configPath;
-
-        if (!$config instanceof Config) {
-            echo "Config must be an instance of PDORowConfig" . PHP_EOL;
-            return self::FAILURE;
-        }
-
-        echo $config . PHP_EOL;
+        $this->output->write($config->__toString());
 
         $directory = $config->getDirectory();
         $this->filesystem->ensureDirectory($directory);
 
-        echo "Start generating..." . PHP_EOL;
+        $this->output->write('Start generating...');
 
         $tables = $this->tableInspector
             ->inspect($config->getPdo());

@@ -9,6 +9,8 @@ use JlacroixDev\PdoRow\Command\GenerateOptionsParser;
 use JlacroixDev\PdoRow\Command\HelpCommand;
 use JlacroixDev\PdoRow\Command\InitCommand;
 use JlacroixDev\PdoRow\Command\VersionCommand;
+use JlacroixDev\PdoRow\Config\ConfigLoader;
+use JlacroixDev\PdoRow\Console\Output;
 use JlacroixDev\PdoRow\Filesystem\LocalFilesystem;
 use JlacroixDev\PdoRow\Generation\GeneratedFileWriter;
 use JlacroixDev\PdoRow\Generation\TableFilter;
@@ -35,11 +37,13 @@ final class ApplicationFactory
             new InitCommand($renderer, $filesystem),
             new GenerateCommand(
                 new GenerateOptionsParser(),
+                new ConfigLoader($filesystem),
                 $tableFilter,
                 $tableInspector,
                 $renderer,
                 $writer,
-                $filesystem
+                $filesystem,
+                new Output(),
             ),
             new VersionCommand(Version::VERSION),
         ];
