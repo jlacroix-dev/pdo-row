@@ -28,14 +28,14 @@ namespace <?= $namespace ?>;
 /**
  * Use with PDO::FETCH_ASSOC
  * @phpstan-type <?= $className ?>Assoc array{
-<?php foreach ($columns as $column): ?>
+<?php foreach ($columns as $column) : ?>
  *      <?= $column->name ?>: <?= $column->nullable ? '?string' : 'string' ?>,
 <?php endforeach; ?>
  * }
  */
 final class <?= $className . PHP_EOL ?>
 {
-<?php foreach ($columns as $column): ?>
+<?php foreach ($columns as $column) : ?>
     // <?= $column->type ?> <?= $column->nullable ? 'NULL' : 'NOT NULL' ?><?= PHP_EOL ?>
     public <?= $column->nullable ? '?string' : 'string' ?> $<?= $column->name ?>;
 <?php endforeach; ?>

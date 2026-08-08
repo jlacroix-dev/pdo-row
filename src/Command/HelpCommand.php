@@ -13,8 +13,7 @@ final class HelpCommand implements Command
      */
     public function __construct(
         private readonly array $commands
-    )
-    {
+    ) {
     }
 
     public static function name(): string
@@ -53,5 +52,4 @@ TEXT;
         );
         return Command::SUCCESS;
     }
-
 }

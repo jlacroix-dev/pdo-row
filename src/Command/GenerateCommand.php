@@ -21,12 +21,10 @@ final class GenerateCommand implements Command
 {
     public function __construct(
         private readonly TableFilter $tableFilter,
-        private readonly TableInspector   $tableInspector,
+        private readonly TableInspector $tableInspector,
         private readonly TemplateRenderer $renderer,
-        private readonly Filesystem       $filesystem,
-    )
-    {
-
+        private readonly Filesystem $filesystem,
+    ) {
     }
 
     public static function name(): string
@@ -109,7 +107,6 @@ HELP;
         );
 
         foreach ($tables as $table) {
-
             $className = $config->getNamingStrategy()->class($table->name);
 
             $code = $this->renderer->render($config->getTemplate(), [

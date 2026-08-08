@@ -13,8 +13,7 @@ final class TableInspector
      */
     public function __construct(
         private readonly array $inspectors,
-    )
-    {
+    ) {
     }
 
     /**

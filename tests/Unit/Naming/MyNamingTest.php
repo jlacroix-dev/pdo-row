@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class MyNamingTest extends TestCase
 {
-    #[DataProvider('dataProvider_testClass')]
+    #[DataProvider('testClassDataProvider')]
     public function testClass(string $table, string $expected): void
     {
         $naming = new MyNaming();
@@ -16,7 +16,7 @@ class MyNamingTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public static function dataProvider_testClass(): array
+    public static function testClassDataProvider(): array
     {
         return [
             ['user', 'UserTableRow'],

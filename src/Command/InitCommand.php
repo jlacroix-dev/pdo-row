@@ -12,8 +12,7 @@ final class InitCommand implements Command
     public function __construct(
         private TemplateRenderer $renderer,
         private Filesystem $filesystem,
-    ){
-
+    ) {
     }
 
     public static function name(): string

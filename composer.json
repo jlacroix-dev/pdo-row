@@ -26,7 +26,8 @@
     "phpstan/phpstan-phpunit": "^2.0",
     "phpstan/phpstan-strict-rules": "^2.0",
     "phpunit/phpunit": "^13.3",
-    "rector/rector": "^2.5"
+    "rector/rector": "^2.5",
+    "squizlabs/php_codesniffer": "^4.0"
   },
   "autoload": {
     "psr-4": {
@@ -45,7 +46,9 @@
   "scripts": {
     "test": "phpunit",
     "phpstan": "phpstan analyse",
-    "rector": "rector"
+    "rector": "rector",
+    "phpcs": "phpcs",
+    "phpcbf": "phpcbf"
   },
   "config": {
     "sort-packages": true

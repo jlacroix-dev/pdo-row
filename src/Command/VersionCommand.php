@@ -8,8 +8,7 @@ final class VersionCommand implements Command
 {
     public function __construct(
         private readonly string $version,
-    )
-    {
+    ) {
     }
 
     public static function name(): string

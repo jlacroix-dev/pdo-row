@@ -16,14 +16,13 @@ class TableFilterTest extends TestCase
      * @param string[]|null $exceptTables
      * @param string[] $expected
      */
-    #[DataProvider('dataProvider_testFilter')]
+    #[DataProvider('testFilterDataProvider')]
     public function testFilter(
-        array  $tables,
+        array $tables,
         ?array $onlyTables,
         ?array $exceptTables,
-        array  $expected,
-    ): void
-    {
+        array $expected,
+    ): void {
         $tableFilter = new TableFilter();
         $actual = $tableFilter->filter($tables, $onlyTables, $exceptTables);
 
@@ -31,7 +30,7 @@ class TableFilterTest extends TestCase
         self::assertArraysAreEqual($expected, $actualTableNames);
     }
 
-    public static function dataProvider_testFilter(): array
+    public static function testFilterDataProvider(): array
     {
         $tables = [
             new Table('users', []),

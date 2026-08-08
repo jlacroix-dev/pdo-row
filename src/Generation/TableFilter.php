@@ -17,11 +17,10 @@ final class TableFilter
      * @return Table[]
      */
     public function filter(
-        array  $tables,
+        array $tables,
         ?array $onlyTables,
         ?array $exceptTables,
-    ): array
-    {
+    ): array {
         if (!is_null($onlyTables) && !is_null($exceptTables)) {
             throw new InvalidArgumentException('Can not use onlyTables and exceptTables at the same time');
         }
