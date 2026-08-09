@@ -38,13 +38,30 @@
     "psr-4": {
       "Tests\\Unit\\": "tests/Unit/",
       "Tests\\Integration\\": "tests/Integration/"
-    }
+    },
+    "files": [
+      "src/functions/helpers.php"
+    ]
   },
   "bin": [
     "bin/pdo-row"
   ],
   "scripts": {
-    "test": "phpunit",
+    "test": [
+      "@test:unit",
+      "@test:integration"
+    ],
+    "test:unit": "phpunit --testsuite unit",
+    "test:integration:sqlite:setup": "bash tests/bin/setup-integration-sqlite.sh",
+    "test:integration:mysql:setup": "bash tests/bin/setup-integration-mysql.sh",
+    "test:integration:setup": [
+      "@test:integration:sqlite:setup",
+      "@test:integration:mysql:setup"
+    ],
+    "test:integration": [
+      "@test:integration:setup",
+      "phpunit --testsuite integration"
+    ],
     "phpstan": "phpstan analyse",
     "rector": "rector",
     "phpcs": "phpcs",

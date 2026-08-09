@@ -3,3 +3,8 @@
 /local
 /var
 /vendor
+
+/tests/Fixtures/sqlite/database.sqlite
+/tests/Fixtures/sqlite/generated/
+
+/tests/Fixtures/mysql/generated/

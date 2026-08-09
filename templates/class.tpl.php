@@ -10,7 +10,7 @@ use JlacroixDev\PdoRow\Model\Column;
  */
 
 ?>
-<?= '<?php' ?>
+<?= '<?php' . PHP_EOL ?>
 
 declare(strict_types=1);
 
