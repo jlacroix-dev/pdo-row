@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JlacroixDev\PdoRow\Command;
+namespace JlacroixDev\PdoRow\Console\Command;
 
 interface Command
 {

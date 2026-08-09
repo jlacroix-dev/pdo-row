@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow;
 
-use JlacroixDev\PdoRow\Command\GenerateCommand;
-use JlacroixDev\PdoRow\Command\GenerateOptionsParser;
-use JlacroixDev\PdoRow\Command\HelpCommand;
-use JlacroixDev\PdoRow\Command\InitCommand;
-use JlacroixDev\PdoRow\Command\VersionCommand;
 use JlacroixDev\PdoRow\Config\ConfigLoader;
+use JlacroixDev\PdoRow\Console\Command\GenerateCommand;
+use JlacroixDev\PdoRow\Console\Command\GenerateOptionsParser;
+use JlacroixDev\PdoRow\Console\Command\HelpCommand;
+use JlacroixDev\PdoRow\Console\Command\InitCommand;
+use JlacroixDev\PdoRow\Console\Command\VersionCommand;
 use JlacroixDev\PdoRow\Console\Output;
 use JlacroixDev\PdoRow\Filesystem\LocalFilesystem;
 use JlacroixDev\PdoRow\Generation\GeneratedFileWriter;
@@ -32,9 +32,10 @@ final class ApplicationFactory
         $renderer = new TemplateRenderer();
         $filesystem = new LocalFilesystem();
         $writer = new GeneratedFileWriter($filesystem);
+        $output = new Output();
 
         $commands = [
-            new InitCommand($renderer, $filesystem),
+            new InitCommand($renderer, $filesystem, $output),
             new GenerateCommand(
                 new GenerateOptionsParser(),
                 new ConfigLoader($filesystem),
@@ -43,11 +44,11 @@ final class ApplicationFactory
                 $renderer,
                 $writer,
                 $filesystem,
-                new Output(),
+                $output,
             ),
-            new VersionCommand(Version::VERSION),
+            new VersionCommand(Version::VERSION, $output),
         ];
-        $commands[] = new HelpCommand($commands);
+        $commands[] = new HelpCommand($commands, $output);
 
         return new Application($commands);
     }

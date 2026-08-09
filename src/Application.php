@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow;
 
-use JlacroixDev\PdoRow\Command\Command;
+use JlacroixDev\PdoRow\Console\Command\Command;
 use RuntimeException;
 
 final class Application

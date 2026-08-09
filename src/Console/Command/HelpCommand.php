@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace JlacroixDev\PdoRow\Command;
+namespace JlacroixDev\PdoRow\Console\Command;
 
-use JlacroixDev\PdoRow\Command\Command;
+use JlacroixDev\PdoRow\Console\Output;
 
-final class HelpCommand implements Command
+final readonly class HelpCommand implements Command
 {
     /**
      * @param Command[] $commands
      */
     public function __construct(
-        private readonly array $commands
+        private array $commands,
+        private Output $output,
     ) {
     }
 
@@ -28,7 +29,7 @@ final class HelpCommand implements Command
 
     public function run(array $argv): int
     {
-        echo <<<TEXT
+        $help = <<<TEXT
 pdo-row
 
 Usage:
@@ -37,6 +38,7 @@ Usage:
 Commands:
 
 TEXT;
+        $this->output->write($help);
 
         foreach ($this->commands as $command) {
             printf(

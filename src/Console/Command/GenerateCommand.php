@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JlacroixDev\PdoRow\Command;
+namespace JlacroixDev\PdoRow\Console\Command;
 
 use JlacroixDev\PdoRow\Config\ConfigLoader;
 use JlacroixDev\PdoRow\Console\Output;
@@ -14,17 +14,17 @@ use JlacroixDev\PdoRow\TableInspector\TableInspector;
 use JlacroixDev\PdoRow\Template\TemplateRenderer;
 use JlacroixDev\PdoRow\Version;
 
-final class GenerateCommand implements Command
+final readonly class GenerateCommand implements Command
 {
     public function __construct(
-        private readonly GenerateOptionsParser $optionsParser,
-        private readonly ConfigLoader $configLoader,
-        private readonly TableFilter $tableFilter,
-        private readonly TableInspector $tableInspector,
-        private readonly TemplateRenderer $renderer,
-        private readonly GeneratedFileWriter $writer,
-        private readonly Filesystem $filesystem,
-        private readonly Output $output,
+        private GenerateOptionsParser $optionsParser,
+        private ConfigLoader $configLoader,
+        private TableFilter $tableFilter,
+        private TableInspector $tableInspector,
+        private TemplateRenderer $renderer,
+        private GeneratedFileWriter $writer,
+        private Filesystem $filesystem,
+        private Output $output,
     ) {
     }
 
@@ -40,7 +40,7 @@ final class GenerateCommand implements Command
 
     private function usage(): void
     {
-        echo <<<HELP
+        $usage = <<<HELP
 Description:
   Generate Row object to use when querying DB with PDO
 
@@ -52,6 +52,7 @@ Options:
   --help                            Display this help message
  
 HELP;
+        $this->output->write($usage);
     }
 
     public function run(array $argv): int
