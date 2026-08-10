@@ -64,8 +64,8 @@
     ],
     "phpstan": "phpstan analyse",
     "rector": "rector",
-    "phpcs": "phpcs",
-    "phpcbf": "phpcbf",
+    "phpcs": "phpcs --standard=phpcs.xml",
+    "phpcbf": "phpcbf --standard=phpcbf.xml",
     "ci": [
       "@phpcs",
       "rector process --dry-run",
