@@ -46,7 +46,7 @@ final class ApplicationFactory
                 $filesystem,
                 $output,
             ),
-            new VersionCommand(Version::VERSION, $output),
+            new VersionCommand(Package::version(), $output),
         ];
         $commands[] = new HelpCommand($commands, $output);
 

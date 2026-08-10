@@ -12,7 +12,7 @@ use JlacroixDev\PdoRow\Generation\GeneratedFileWriter;
 use JlacroixDev\PdoRow\Generation\TableFilter;
 use JlacroixDev\PdoRow\TableInspector\TableInspector;
 use JlacroixDev\PdoRow\Template\TemplateRenderer;
-use JlacroixDev\PdoRow\Version;
+use JlacroixDev\PdoRow\Package;
 
 final readonly class GenerateCommand implements Command
 {
@@ -88,7 +88,7 @@ HELP;
             $filename = "{$className}.php";
 
             $code = $this->renderer->render($config->getTemplate(), [
-                'version' => Version::VERSION,
+                'version' => Package::version(),
                 'namespace' => $config->getNamespace(),
                 'className' => $className,
                 'columns' => $table->columns,
