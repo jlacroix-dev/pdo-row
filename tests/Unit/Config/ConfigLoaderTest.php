@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Config;
 
 use Exception;
-use JlacroixDev\PdoRow\Config;
+use JlacroixDev\PdoRow\Config\Config;
 use JlacroixDev\PdoRow\Config\ConfigLoader;
 use JlacroixDev\PdoRow\Filesystem\Filesystem;
 use PDO;

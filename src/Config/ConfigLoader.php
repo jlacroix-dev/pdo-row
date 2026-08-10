@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace JlacroixDev\PdoRow\Config;
 
 use Exception;
-use JlacroixDev\PdoRow\Config;
+use JlacroixDev\PdoRow\Config\Config;
 use JlacroixDev\PdoRow\Filesystem\Filesystem;
 
 final class ConfigLoader

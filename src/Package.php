@@ -9,7 +9,7 @@ use Composer\InstalledVersions;
 final class Package
 {
     private const string NAME = 'jlacroix-dev/pdo-row';
-    
+
     public static function name(): string
     {
         return self::NAME;

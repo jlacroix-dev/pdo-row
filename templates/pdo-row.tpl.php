@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use JlacroixDev\PdoRow\Config;
+use JlacroixDev\PdoRow\Config\Config;
 
 $host = getenv('DB_HOST');
 $db = getenv('DB_DATABASE');

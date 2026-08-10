@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use JlacroixDev\PdoRow\Config;
+use JlacroixDev\PdoRow\Config\Config;
 
 $host = env('MYSQL_HOST', '127.0.0.1');
 $port = env('MYSQL_PORT', '3306');

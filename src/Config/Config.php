@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JlacroixDev\PdoRow;
+namespace JlacroixDev\PdoRow\Config;
 
 use JlacroixDev\PdoRow\Naming\MyNaming;
 use JlacroixDev\PdoRow\Naming\NamingStrategy;
@@ -14,7 +14,7 @@ final class Config
     private PDO $pdo;
     private string $directory = 'src/Repository/PDO/TableRow';
     private string $namespace = 'App\\Repository\\PDO\\TableRow';
-    private string $template = __DIR__ . '/../templates/class.tpl.php';
+    private string $template = __DIR__ . '/../../templates/class.tpl.php';
     private ?NamingStrategy $namingStrategy = null;
     /** @var string[]|null */
     private ?array $onlyTables = null;
