@@ -10,6 +10,11 @@ parameters:
 	            - tests/**
 	        message: '#::dataProvider[^(\s]*\(\)#'
 	    -
+	        identifier: missingType.iterableValue
+	        paths:
+	            - tests/**
+	        message: '#::[^(\s]*Provider\(\)#'
+	    -
 	        message: '#Class Tests\\Fixtures\\.*\\Generated\\.* not found\.#'
 	        reportUnmatched: false
 	    -

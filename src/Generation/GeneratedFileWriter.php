@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace JlacroixDev\PdoRow\Generation;
 
 use JlacroixDev\PdoRow\Filesystem\Filesystem;
-use JlacroixDev\PdoRow\Filesystem\LocalFilesystem;
 
 final readonly class GeneratedFileWriter
 {

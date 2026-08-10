@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Tests\Integration\MySQL;
 
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use ReflectionNamedType;
+use ReflectionProperty;
 use Tests\Fixtures\MySQL\Generated\UsersTableRow;
 
 final class PdoFetchObjectTest extends TestCase
@@ -50,11 +53,12 @@ final class PdoFetchObjectTest extends TestCase
 
     public function testFetchObjectHydratesGeneratedRow(): void
     {
-        $statement = self::$pdo->query(<<<'SQL'
-            SELECT *
-            FROM users
-            WHERE id = 1
-        SQL);
+        $sql = <<<'SQL'
+SELECT *
+FROM users
+WHERE id = 1
+SQL;
+        $statement = self::$pdo->query($sql);
 
         self::assertNotFalse($statement);
 
@@ -72,11 +76,12 @@ final class PdoFetchObjectTest extends TestCase
 
     public function testFetchAllHydratesGeneratedRows(): void
     {
-        $statement = self::$pdo->query(<<<'SQL'
-            SELECT *
-            FROM users
-            ORDER BY id
-        SQL);
+        $sql = <<<'SQL'
+SELECT *
+FROM users
+ORDER BY id
+SQL;
+        $statement = self::$pdo->query($sql);
 
         self::assertNotFalse($statement);
 
@@ -109,5 +114,85 @@ final class PdoFetchObjectTest extends TestCase
         self::assertSame('0', $rows[1]->active);
         self::assertSame('Jane', $rows[1]->nickname);
         self::assertSame('2026-08-08 13:00:00', $rows[1]->created_at);
+    }
+
+    #[DataProvider('propertyTypeProvider')]
+    public function testGeneratedPropertyTypes(
+        string $property,
+        string $expectedType,
+        bool $nullable,
+    ): void {
+        $reflection = new ReflectionProperty(UsersTableRow::class, $property);
+        /** @var ?ReflectionNamedType $type */
+        $type = $reflection->getType();
+
+        self::assertNotNull(
+            $type,
+            sprintf(
+                'Property %s::$%s must have a type.',
+                UsersTableRow::class,
+                $property,
+            ),
+        );
+
+        self::assertSame(
+            $expectedType,
+            $type->getName(),
+            sprintf(
+                'Property %s::$%s must have type "%s", but has type "%s".',
+                UsersTableRow::class,
+                $property,
+                $expectedType,
+                $type->getName(),
+            ),
+        );
+
+        self::assertSame(
+            $nullable,
+            $type->allowsNull(),
+            sprintf(
+                'Property %s::$%s must%s be nullable, but it is%s nullable.',
+                UsersTableRow::class,
+                $property,
+                $nullable ? '' : ' not',
+                $type->allowsNull() ? '' : ' not',
+            ),
+        );
+    }
+
+    public static function propertyTypeProvider(): array
+    {
+        return [
+            'id' => [
+                'property' => 'id',
+                'expectedType' => 'string',
+                'nullable' => false,
+            ],
+            'name' => [
+                'property' => 'name',
+                'expectedType' => 'string',
+                'nullable' => false,
+            ],
+            'email' => [
+                'property' => 'email',
+                'expectedType' => 'string',
+                'nullable' => false,
+            ],
+            'active' => [
+                'property' => 'active',
+                'expectedType' => 'string',
+                'nullable' => false,
+            ],
+            'nickname' => [
+                'property' => 'nickname',
+                'expectedType' => 'string',
+                'nullable' => true,
+            ],
+            'created_at' => [
+                'property' => 'created_at',
+                'expectedType' => 'string',
+                'nullable' => false,
+            ],
+        ];
     }
 }

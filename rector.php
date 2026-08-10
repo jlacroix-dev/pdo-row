@@ -12,6 +12,7 @@ return RectorConfig::configure()
     ->withSkip([
         __DIR__ . '/tests/Fixtures/*/generated',
     ])
+    ->withImportNames()
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,
