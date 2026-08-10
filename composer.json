@@ -67,6 +67,8 @@
     "phpcs": "phpcs --standard=phpcs.xml",
     "phpcbf": "phpcbf --standard=phpcbf.xml",
     "ci": [
+      "composer validate --strict",
+      "composer audit",
       "@phpcs",
       "rector process --dry-run",
       "@phpstan",
