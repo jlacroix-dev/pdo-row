@@ -9,6 +9,12 @@ parameters:
 	        paths:
 	            - tests/**
 	        message: '#::dataProvider[^(\s]*\(\)#'
+	    -
+	        message: '#Class Tests\\Fixtures\\.*\\Generated\\.* not found\.#'
+	        reportUnmatched: false
+	    -
+	        message: '#Access to property \$.* on an unknown class Tests\\Fixtures\\.*\\Generated\\.*\.#'
+	        reportUnmatched: false
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon
