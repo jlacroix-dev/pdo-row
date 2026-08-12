@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 final class MysqlPhpTypeResolverTest extends TestCase
 {
-    #[DataProvider('nativeTypes')]
+    #[DataProvider('nativeTypesProvider')]
     public function testNativeTypeMapping(
         string $databaseType,
         string $expected,
@@ -36,7 +36,7 @@ final class MysqlPhpTypeResolverTest extends TestCase
         );
     }
 
-    public static function nativeTypes(): iterable
+    public static function nativeTypesProvider(): iterable
     {
         yield ['tinyint', 'int'];
         yield ['tinyint(1)', 'int'];
@@ -62,7 +62,7 @@ final class MysqlPhpTypeResolverTest extends TestCase
         yield ['bit(1)', 'string'];
     }
 
-    #[DataProvider('stringifiedTypes')]
+    #[DataProvider('stringifiedTypesProvider')]
     public function testStringification(
         string $databaseType,
     ): void {
@@ -85,7 +85,7 @@ final class MysqlPhpTypeResolverTest extends TestCase
         );
     }
 
-    public static function stringifiedTypes(): iterable
+    public static function stringifiedTypesProvider(): iterable
     {
         yield ['int'];
         yield ['bigint'];

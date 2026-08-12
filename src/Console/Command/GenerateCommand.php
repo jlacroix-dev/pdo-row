@@ -89,9 +89,8 @@ HELP;
             $config->getExceptTables(),
         );
 
-        $driverName = (string) $pdo->getAttribute(
-            PDO::ATTR_DRIVER_NAME
-        );
+        /** @var string $driverName */
+        $driverName = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
         $fetchTypeConfiguration = new FetchTypeConfiguration(
             stringifyFetches: (bool) $pdo->getAttribute(

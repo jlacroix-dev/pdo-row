@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace JlacroixDev\PdoRow\TableInspector;
 
 use Exception;
-use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use JlacroixDev\PdoRow\Model\Table;
 use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\ColumnsTableRow;
@@ -46,7 +45,7 @@ SQL;
     }
 
     /**
-     * @return Column[]
+     * @return DatabaseColumn[]
      */
     private function columns(PDO $pdo, string $table): array
     {

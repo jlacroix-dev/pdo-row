@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow\Type;
 
-use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use RuntimeException;
 

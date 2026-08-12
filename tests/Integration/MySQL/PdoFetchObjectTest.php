@@ -7,6 +7,7 @@ namespace Tests\Integration\MySQL;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Tests\Fixtures\MySQL\Generated\Native\UsersTableRow as NativeUsersTableRow;
 use Tests\Fixtures\MySQL\Generated\Stringified\UsersTableRow as StringifiedUsersTableRow;
 use Tests\Fixtures\TestDatabase;
@@ -42,6 +43,9 @@ final class PdoFetchObjectTest extends TestCase
         );
     }
 
+    /**
+     * @param class-string<object> $rowClass
+     */
     #[DataProvider('stringifyFetchesProvider')]
     public function testFetchObject(
         string $rowClass,
@@ -51,25 +55,31 @@ final class PdoFetchObjectTest extends TestCase
 
         $sql = 'SELECT * FROM users LIMIT 1';
 
-        $stdClass = $pdo
-            ->query($sql)
-            ->fetchObject();
+        $statement = $pdo->query($sql);
+        self::assertNotFalse($statement);
+        $stdClass = $statement->fetchObject();
+        self::assertNotFalse($stdClass);
 
-        $tableRow = $pdo
-            ->query($sql)
-            ->fetchObject($rowClass);
+        $statement = $pdo->query($sql);
+        self::assertNotFalse($statement);
+        $tableRow = $statement->fetchObject($rowClass);
+        self::assertNotFalse($tableRow);
 
         self::assertInstanceOf($rowClass, $tableRow);
 
         foreach (get_object_vars($stdClass) as $property => $value) {
             self::assertSame(
                 get_debug_type($value),
+                // @phpstan-ignore-next-line
                 get_debug_type($tableRow->$property),
                 "Property {$property} has an unexpected runtime type.",
             );
         }
     }
 
+    /**
+     * @param class-string<object> $rowClass
+     */
     #[DataProvider('stringifyFetchesProvider')]
     public function testFetchAllObject(
         string $rowClass,
@@ -83,11 +93,15 @@ FROM users
 ORDER BY id
 SQL;
 
-        $rows = $pdo->query($sql)
-            ->fetchAll(PDO::FETCH_CLASS);
+        $statement = $pdo->query($sql);
+        self::assertNotFalse($statement);
+        /** @var stdClass[] $rows */
+        $rows = $statement->fetchAll(PDO::FETCH_CLASS);
 
-        $tableRows = $pdo->query($sql)
-            ->fetchAll(PDO::FETCH_CLASS, $rowClass);
+        $statement = $pdo->query($sql);
+        self::assertNotFalse($statement);
+        /** @var object[] $tableRows */
+        $tableRows = $statement->fetchAll(PDO::FETCH_CLASS, $rowClass);
 
         self::assertCount(2, $rows);
 
@@ -101,6 +115,7 @@ SQL;
             foreach (get_object_vars($stdClass) as $property => $value) {
                 self::assertSame(
                     get_debug_type($value),
+                    // @phpstan-ignore-next-line
                     get_debug_type($tableRow->$property),
                     "Property {$property} has an unexpected runtime type.",
                 );

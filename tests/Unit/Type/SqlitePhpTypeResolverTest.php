@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class SqlitePhpTypeResolverTest extends TestCase
 {
-    #[DataProvider('nativeTypes')]
+    #[DataProvider('nativeTypesProvider')]
     public function testNativeTypeMapping(
         string $databaseType,
         string $expected,
@@ -36,7 +36,7 @@ class SqlitePhpTypeResolverTest extends TestCase
         );
     }
 
-    public static function nativeTypes(): iterable
+    public static function nativeTypesProvider(): iterable
     {
         yield ['INTEGER', 'int'];
         yield ['VARCHAR(255)', 'string'];
@@ -44,7 +44,7 @@ class SqlitePhpTypeResolverTest extends TestCase
         yield ['DATETIME', 'string'];
     }
 
-    #[DataProvider('stringifiedTypes')]
+    #[DataProvider('stringifiedTypesProvider')]
     public function testStringification(
         string $databaseType,
     ): void {
@@ -67,7 +67,7 @@ class SqlitePhpTypeResolverTest extends TestCase
         );
     }
 
-    public static function stringifiedTypes(): iterable
+    public static function stringifiedTypesProvider(): iterable
     {
         yield ['INTEGER'];
         yield ['VARCHAR(255)'];
