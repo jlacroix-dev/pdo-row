@@ -89,17 +89,24 @@ echo "==> Generating TableRow classes"
 
 cd "$FIXTURES_DIR"
 
-php "$PDO_ROW" generate
+php "$PDO_ROW" generate --configuration="pdo-row.php"
+php "$PDO_ROW" generate --configuration="pdo-row-stringified.php"
 
 # ---------------------------------------------------------------------------
 # Validate generated fixture
 # ---------------------------------------------------------------------------
 
-GENERATED_ROW="$GENERATED_DIR/UsersTableRow.php"
-
-if [ ! -f "$GENERATED_ROW" ]; then
+GENERATED_NATIVE_ROW="$GENERATED_DIR/Native/UsersTableRow.php"
+if [ ! -f "$GENERATED_NATIVE_ROW" ]; then
     echo "Error: expected generated class was not created:" >&2
-    echo "       $GENERATED_ROW" >&2
+    echo "       $GENERATED_NATIVE_ROW" >&2
+    exit 1
+fi
+
+GENERATED_STRINGIFIED_ROW="$GENERATED_DIR/Stringified/UsersTableRow.php"
+if [ ! -f "$GENERATED_STRINGIFIED_ROW" ]; then
+    echo "Error: expected generated class was not created:" >&2
+    echo "       $GENERATED_STRINGIFIED_ROW" >&2
     exit 1
 fi
 
@@ -112,4 +119,5 @@ echo "Host:"
 echo "  $MYSQL_HOST:$MYSQL_PORT"
 echo
 echo "Generated:"
-echo "  $GENERATED_ROW"
+echo "  $GENERATED_NATIVE_ROW"
+echo "  $GENERATED_STRINGIFIED_ROW"

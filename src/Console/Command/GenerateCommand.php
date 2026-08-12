@@ -10,9 +10,14 @@ use JlacroixDev\PdoRow\Filesystem\Filesystem;
 use JlacroixDev\PdoRow\Generation\GeneratedFile;
 use JlacroixDev\PdoRow\Generation\GeneratedFileWriter;
 use JlacroixDev\PdoRow\Generation\TableFilter;
+use JlacroixDev\PdoRow\Model\Column;
+use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use JlacroixDev\PdoRow\TableInspector\TableInspector;
 use JlacroixDev\PdoRow\Template\TemplateRenderer;
 use JlacroixDev\PdoRow\Package;
+use JlacroixDev\PdoRow\Type\FetchTypeConfiguration;
+use JlacroixDev\PdoRow\Type\PhpTypeResolverCollection;
+use PDO;
 
 final readonly class GenerateCommand implements Command
 {
@@ -21,6 +26,7 @@ final readonly class GenerateCommand implements Command
         private ConfigLoader $configLoader,
         private TableFilter $tableFilter,
         private TableInspector $tableInspector,
+        private PhpTypeResolverCollection $phpTypeResolvers,
         private TemplateRenderer $renderer,
         private GeneratedFileWriter $writer,
         private Filesystem $filesystem,
@@ -57,7 +63,7 @@ HELP;
 
     public function run(array $argv): int
     {
-        $options = $this->optionsParser->parse();
+        $options = $this->optionsParser->parse($argv);
 
         if ($options->help) {
             $this->usage();
@@ -73,8 +79,9 @@ HELP;
 
         $this->output->write('Start generating...');
 
+        $pdo = $config->getPdo();
         $tables = $this->tableInspector
-            ->inspect($config->getPdo());
+            ->inspect($pdo);
 
         $tables = $this->tableFilter->filter(
             $tables,
@@ -82,8 +89,32 @@ HELP;
             $config->getExceptTables(),
         );
 
+        $driverName = (string) $pdo->getAttribute(
+            PDO::ATTR_DRIVER_NAME
+        );
+
+        $fetchTypeConfiguration = new FetchTypeConfiguration(
+            stringifyFetches: (bool) $pdo->getAttribute(
+                PDO::ATTR_STRINGIFY_FETCHES
+            ),
+        );
+
         $files = [];
         foreach ($tables as $table) {
+            $columns = array_map(
+                fn (DatabaseColumn $column): Column => new Column(
+                    name: $column->name,
+                    databaseType: $column->databaseType,
+                    phpType: $this->phpTypeResolvers->resolve(
+                        $driverName,
+                        $column,
+                        $fetchTypeConfiguration,
+                    ),
+                    nullable: $column->nullable,
+                ),
+                $table->columns,
+            );
+
             $className = $config->getNamingStrategy()->class($table->name);
             $filename = "{$className}.php";
 
@@ -91,7 +122,7 @@ HELP;
                 'version' => Package::version(),
                 'namespace' => $config->getNamespace(),
                 'className' => $className,
-                'columns' => $table->columns,
+                'columns' => $columns,
             ]);
 
             $files[] = new GeneratedFile($filename, $code);

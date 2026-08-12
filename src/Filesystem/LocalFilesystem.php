@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow\Filesystem;
 
+use Exception;
 use RuntimeException;
 
 final class LocalFilesystem implements Filesystem
@@ -13,7 +14,10 @@ final class LocalFilesystem implements Filesystem
         if (!file_exists(dirname($file))) {
             mkdir(dirname($file), recursive: true);
         }
-        file_put_contents($file, $contents);
+        $numberOfBytes = file_put_contents($file, $contents);
+        if ($numberOfBytes === false) {
+            throw new Exception("Unable to write file '{$file}'.");
+        }
     }
 
     public function exists(string $file): bool

@@ -18,6 +18,9 @@ use JlacroixDev\PdoRow\TableInspector\MysqlSchemaInspector;
 use JlacroixDev\PdoRow\TableInspector\SqliteSchemaInspector;
 use JlacroixDev\PdoRow\TableInspector\TableInspector;
 use JlacroixDev\PdoRow\Template\TemplateRenderer;
+use JlacroixDev\PdoRow\Type\MysqlPhpTypeResolver;
+use JlacroixDev\PdoRow\Type\PhpTypeResolverCollection;
+use JlacroixDev\PdoRow\Type\SqlitePhpTypeResolver;
 
 final class ApplicationFactory
 {
@@ -27,6 +30,11 @@ final class ApplicationFactory
         $tableInspector = new TableInspector([
             new MysqlSchemaInspector(),
             new SqliteSchemaInspector(),
+        ]);
+
+        $phpTypeResolvers = new PhpTypeResolverCollection([
+            new MysqlPhpTypeResolver(),
+            new SqlitePhpTypeResolver(),
         ]);
 
         $renderer = new TemplateRenderer();
@@ -41,6 +49,7 @@ final class ApplicationFactory
                 new ConfigLoader($filesystem),
                 $tableFilter,
                 $tableInspector,
+                $phpTypeResolvers,
                 $renderer,
                 $writer,
                 $filesystem,

@@ -7,179 +7,123 @@ namespace Tests\Integration\SQLite;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use ReflectionNamedType;
-use ReflectionProperty;
-use Tests\Fixtures\SQLite\Generated\UsersTableRow;
+use Tests\Fixtures\SQLite\Generated\Native\UsersTableRow as NativeUsersTableRow;
+use Tests\Fixtures\SQLite\Generated\Stringified\UsersTableRow as StringifiedUsersTableRow;
+use Tests\Fixtures\TestDatabase;
 
 final class PdoFetchObjectTest extends TestCase
 {
-    private static PDO $pdo;
-
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
         $database = __DIR__ . '/../../Fixtures/sqlite/database.sqlite';
-        $generated = __DIR__ . '/../../Fixtures/sqlite/generated/UsersTableRow.php';
-
         self::assertFileExists(
             $database,
             'Integration database does not exist. Run: composer test:integration:setup'
         );
 
+        $generated = __DIR__ . '/../../Fixtures/sqlite/generated/Native/UsersTableRow.php';
         self::assertFileExists(
             $generated,
             'Generated TableRow does not exist. Run: composer test:integration:sqlite:setup'
         );
-
         require_once $generated;
 
         self::assertTrue(
-            class_exists(UsersTableRow::class),
-            'UsersTableRow was not generated.'
+            class_exists(NativeUsersTableRow::class),
+            NativeUsersTableRow::class . ' was not generated.'
         );
 
-        self::$pdo = new PDO('sqlite:' . $database);
+        $generated = __DIR__ . '/../../Fixtures/sqlite/generated/Stringified/UsersTableRow.php';
+        self::assertFileExists(
+            $generated,
+            'Generated TableRow does not exist. Run: composer test:integration:sqlite:setup'
+        );
+        require_once $generated;
 
-        self::$pdo->setAttribute(
-            PDO::ATTR_ERRMODE,
-            PDO::ERRMODE_EXCEPTION
+        self::assertTrue(
+            class_exists(StringifiedUsersTableRow::class),
+            StringifiedUsersTableRow::class . ' was not generated.'
         );
     }
 
-    public function testFetchObjectHydratesGeneratedRow(): void
-    {
-        $sql = <<<'SQL'
-SELECT *
-FROM users
-WHERE id = 1
-SQL;
-        $statement = self::$pdo->query($sql);
+    #[DataProvider('stringifyFetchesProvider')]
+    public function testFetchObject(
+        string $rowClass,
+        bool $stringifyFetches,
+    ): void {
+        $pdo = TestDatabase::sqlite($stringifyFetches);
 
-        self::assertNotFalse($statement);
+        $sql = 'SELECT * FROM users LIMIT 1';
 
-        $row = $statement->fetchObject(UsersTableRow::class);
+        $stdClass = $pdo
+            ->query($sql)
+            ->fetchObject();
 
-        self::assertInstanceOf(UsersTableRow::class, $row);
+        $tableRow = $pdo
+            ->query($sql)
+            ->fetchObject($rowClass);
 
-        self::assertSame('1', $row->id);
-        self::assertSame('John Doe', $row->name);
-        self::assertSame('john@example.com', $row->email);
-        self::assertSame('1', $row->active);
-        self::assertNull($row->nickname);
-        self::assertSame('2026-08-08 12:00:00', $row->created_at);
+        self::assertInstanceOf($rowClass, $tableRow);
+
+        foreach (get_object_vars($stdClass) as $property => $value) {
+            self::assertSame(
+                get_debug_type($value),
+                get_debug_type($tableRow->$property),
+                "Property {$property} has an unexpected runtime type.",
+            );
+        }
     }
 
-    public function testFetchAllHydratesGeneratedRows(): void
-    {
+    #[DataProvider('stringifyFetchesProvider')]
+    public function testFetchAllObject(
+        string $rowClass,
+        bool $stringifyFetches,
+    ): void {
+        $pdo = TestDatabase::sqlite($stringifyFetches);
+
         $sql = <<<'SQL'
 SELECT *
 FROM users
 ORDER BY id
 SQL;
-        $statement = self::$pdo->query($sql);
 
-        self::assertNotFalse($statement);
+        $rows = $pdo->query($sql)
+            ->fetchAll(PDO::FETCH_CLASS);
 
-        $rows = $statement->fetchAll(PDO::FETCH_CLASS, UsersTableRow::class);
+        $tableRows = $pdo->query($sql)
+            ->fetchAll(PDO::FETCH_CLASS, $rowClass);
 
         self::assertCount(2, $rows);
 
-        self::assertInstanceOf(UsersTableRow::class, $rows[0]);
+        $count = count($rows);
+        for ($i = 0; $i < $count; ++$i) {
+            $stdClass = $rows[$i];
+            $tableRow = $tableRows[$i];
 
-        self::assertInstanceOf(UsersTableRow::class, $rows[1]);
+            self::assertInstanceOf($rowClass, $tableRow);
 
-        self::assertSame('1', $rows[0]->id);
-        self::assertSame('John Doe', $rows[0]->name);
-        self::assertSame('john@example.com', $rows[0]->email);
-        self::assertSame('1', $rows[0]->active);
-        self::assertNull($rows[0]->nickname);
-
-        self::assertSame('2', $rows[1]->id);
-        self::assertSame('Jane Doe', $rows[1]->name);
-        self::assertSame('jane@example.com', $rows[1]->email);
-        self::assertSame('0', $rows[1]->active);
-        self::assertSame('Jane', $rows[1]->nickname);
-        self::assertSame('2026-08-08 13:00:00', $rows[1]->created_at);
+            foreach (get_object_vars($stdClass) as $property => $value) {
+                self::assertSame(
+                    get_debug_type($value),
+                    get_debug_type($tableRow->$property),
+                    "Property {$property} has an unexpected runtime type.",
+                );
+            }
+        }
     }
 
-    #[DataProvider('propertyTypeProvider')]
-    public function testGeneratedPropertyTypes(
-        string $property,
-        string $expectedType,
-        bool $nullable,
-    ): void {
-        $reflection = new ReflectionProperty(UsersTableRow::class, $property);
-        /** @var ?ReflectionNamedType $type */
-        $type = $reflection->getType();
-
-        self::assertNotNull(
-            $type,
-            sprintf(
-                'Property %s::$%s must have a type.',
-                UsersTableRow::class,
-                $property,
-            ),
-        );
-
-        self::assertSame(
-            $expectedType,
-            $type->getName(),
-            sprintf(
-                'Property %s::$%s must have type "%s", but has type "%s".',
-                UsersTableRow::class,
-                $property,
-                $expectedType,
-                $type->getName(),
-            ),
-        );
-
-        self::assertSame(
-            $nullable,
-            $type->allowsNull(),
-            sprintf(
-                'Property %s::$%s must%s be nullable, but it is%s nullable.',
-                UsersTableRow::class,
-                $property,
-                $nullable ? '' : ' not',
-                $type->allowsNull() ? '' : ' not',
-            ),
-        );
-    }
-
-    public static function propertyTypeProvider(): array
+    public static function stringifyFetchesProvider(): iterable
     {
-        return [
-            'id' => [
-                'property' => 'id',
-                'expectedType' => 'string',
-                'nullable' => false,
-            ],
-            'name' => [
-                'property' => 'name',
-                'expectedType' => 'string',
-                'nullable' => false,
-            ],
-            'email' => [
-                'property' => 'email',
-                'expectedType' => 'string',
-                'nullable' => false,
-            ],
-            'active' => [
-                'property' => 'active',
-                'expectedType' => 'string',
-                'nullable' => false,
-            ],
-            'nickname' => [
-                'property' => 'nickname',
-                'expectedType' => 'string',
-                'nullable' => true,
-            ],
-            'created_at' => [
-                'property' => 'created_at',
-                'expectedType' => 'string',
-                'nullable' => false,
-            ],
+        yield 'native' => [
+            NativeUsersTableRow::class,
+            false,
+        ];
+
+        yield 'stringified' => [
+            StringifiedUsersTableRow::class,
+            true,
         ];
     }
 }

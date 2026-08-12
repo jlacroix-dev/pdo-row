@@ -6,6 +6,7 @@ namespace JlacroixDev\PdoRow\TableInspector;
 
 use Exception;
 use JlacroixDev\PdoRow\Model\Column;
+use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use JlacroixDev\PdoRow\Model\Table;
 use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\ColumnsTableRow;
 use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\TablesTableRow;
@@ -64,9 +65,9 @@ SQL;
         /** @var ColumnsTableRow[] $rows */
         $rows = $stmt->fetchAll(PDO::FETCH_CLASS, ColumnsTableRow::class);
         foreach ($rows as $row) {
-            $columns[] = new Column(
+            $columns[] = new DatabaseColumn(
                 name: $row->COLUMN_NAME ?? '',
-                type: $row->COLUMN_TYPE,
+                databaseType: $row->COLUMN_TYPE,
                 nullable: $row->IS_NULLABLE === 'YES',
             );
         }

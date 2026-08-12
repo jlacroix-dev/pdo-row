@@ -37,7 +37,8 @@
   "autoload-dev": {
     "psr-4": {
       "Tests\\Unit\\": "tests/Unit/",
-      "Tests\\Integration\\": "tests/Integration/"
+      "Tests\\Integration\\": "tests/Integration/",
+      "Tests\\Fixtures\\": "tests/Fixtures/"
     },
     "files": [
       "src/functions/helpers.php"
