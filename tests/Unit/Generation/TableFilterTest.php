@@ -27,7 +27,7 @@ class TableFilterTest extends TestCase
         $actual = $tableFilter->filter($tables, $onlyTables, $exceptTables);
 
         $actualTableNames = array_map(fn(Table $table): string => $table->name, $actual);
-        self::assertArraysAreEqual($expected, $actualTableNames);
+        self::assertEqualsCanonicalizing($expected, $actualTableNames);
     }
 
     public static function dataProviderTestFilter(): array

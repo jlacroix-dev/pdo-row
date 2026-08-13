@@ -9,7 +9,6 @@
          failOnDeprecation="true"
          failOnPhpunitDeprecation="true"
          failOnNotice="true"
-         displayDetailsOnPhpunitNotices="true"
          failOnSkipped="true"
          failOnIncomplete="true"
 >

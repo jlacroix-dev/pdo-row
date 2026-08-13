@@ -27,7 +27,14 @@ test_version() {
     echo "========================================"
     echo
 
-    PHP_VERSION="$version" docker compose run --rm php composer test:unit
+    PHP_VERSION="$version" docker compose run --rm php \
+        composer install --no-interaction --prefer-dist
+
+#    PHP_VERSION="$version" docker compose run --rm php \
+#        vendor/bin/phpunit --version
+
+    PHP_VERSION="$version" docker compose run --rm php \
+        composer test
 }
 
 case "${1:-}" in

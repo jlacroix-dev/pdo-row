@@ -1,16 +1,17 @@
 services:
   php:
-    image: pdo-row-php:${PHP_VERSION:-8.5}
+    image: pdo-row-php:${PHP_VERSION:-8.2}
     build:
       context: .
       dockerfile: docker/php/Dockerfile
       args:
-        PHP_VERSION: ${PHP_VERSION:-8.5}
+        PHP_VERSION: ${PHP_VERSION:-8.2}
 
     working_dir: /app
 
     volumes:
       - .:/app
+      - vendor:/app/vendor
 
     environment:
       MYSQL_HOST: mysql
@@ -40,3 +41,7 @@ services:
 
     tmpfs:
       - /var/lib/mysql
+
+volumes:
+  vendor:
+    name: pdo-row-vendor-${PHP_VERSION:-8.2}

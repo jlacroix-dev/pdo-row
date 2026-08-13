@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.5
+ARG PHP_VERSION=8.2
 FROM php:${PHP_VERSION}-cli
 
 RUN apt-get update \
@@ -17,6 +17,10 @@ RUN apt-get update \
 
 RUN docker-php-ext-install pdo_sqlite pdo_mysql
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
+
+COPY composer.json composer.lock ./
+
+RUN composer install --prefer-dist --no-interaction
