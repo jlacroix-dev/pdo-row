@@ -1,0 +1,42 @@
+services:
+  php:
+    image: pdo-row-php:${PHP_VERSION:-8.5}
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.5}
+
+    working_dir: /app
+
+    volumes:
+      - .:/app
+
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: pdo_row_test
+      MYSQL_USER: pdo_row
+      MYSQL_PASSWORD: pdo_row
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.4
+
+    environment:
+      MYSQL_DATABASE: pdo_row_test
+      MYSQL_USER: pdo_row
+      MYSQL_PASSWORD: pdo_row
+      MYSQL_ROOT_PASSWORD: root
+
+    healthcheck:
+      test: "mysqladmin ping -h localhost -u pdo_row -ppdo_row"
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+    tmpfs:
+      - /var/lib/mysql

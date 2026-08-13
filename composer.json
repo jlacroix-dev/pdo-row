@@ -19,13 +19,14 @@
     }
   ],
   "require": {
+    "php": ">=8.2",
     "ext-pdo": "*"
   },
   "require-dev": {
     "phpstan/phpstan": "2.2.5",
     "phpstan/phpstan-phpunit": "^2.0",
     "phpstan/phpstan-strict-rules": "^2.0",
-    "phpunit/phpunit": "^13.3",
+    "phpunit/phpunit": "^11.5",
     "rector/rector": "^2.5",
     "squizlabs/php_codesniffer": "^4.0"
   },
