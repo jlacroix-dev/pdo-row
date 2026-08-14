@@ -28,8 +28,9 @@ jobs:
       - run: vendor/bin/phpstan analyse
       - run: vendor/bin/phpunit --testsuite unit
 
-  tests:
+  integration:
     name: PHP ${{ matrix.php }}
+    needs: quality
     runs-on: ubuntu-latest
 
     strategy:
