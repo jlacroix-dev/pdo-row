@@ -23,10 +23,10 @@ jobs:
 
       - run: composer validate --strict
       - run: composer audit
-      - run: phpcs --standard=phpcs.xml
-      - run: rector process --dry-run
-      - run: phpstan analyse
-      - run: phpunit --testsuite unit
+      - run: vendor/bin/phpcs --standard=phpcs.xml
+      - run: vendor/bin/rector process --dry-run
+      - run: vendor/bin/phpstan analyse
+      - run: vendor/bin/phpunit --testsuite unit
 
   tests:
     name: PHP ${{ matrix.php }}
