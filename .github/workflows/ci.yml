@@ -15,7 +15,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.5"
-          extensions: pdo, pdo_mysql, pdo_sqlite
           tools: composer
 
       - name: Install dependencies
@@ -26,11 +25,30 @@ jobs:
       - run: vendor/bin/phpcs --standard=phpcs.xml
       - run: vendor/bin/rector process --dry-run
       - run: vendor/bin/phpstan analyse
+
+  unit:
+    name: Unit tests
+    needs: quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.5"
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction
+
       - run: vendor/bin/phpunit --testsuite unit
 
   integration:
-    name: PHP ${{ matrix.php }}
-    needs: quality
+    name: Integration tests - PHP ${{ matrix.php }}
+    needs: unit
     runs-on: ubuntu-latest
 
     strategy:
