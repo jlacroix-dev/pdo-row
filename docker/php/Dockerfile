@@ -20,7 +20,3 @@ RUN docker-php-ext-install pdo_sqlite pdo_mysql
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
-
-COPY composer.json ./
-
-RUN composer install --prefer-dist --no-interaction
