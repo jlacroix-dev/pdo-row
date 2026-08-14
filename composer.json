@@ -74,7 +74,7 @@
       "@phpcs",
       "rector process --dry-run",
       "@phpstan",
-      "@test:unit"
+      "@test"
     ],
     "fix": [
       "@phpcbf",

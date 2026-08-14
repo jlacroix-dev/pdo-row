@@ -21,8 +21,12 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction
 
-      - name: Run CI
-        run: composer ci
+      - run: composer validate --strict
+      - run: composer audit
+      - run: phpcs --standard=phpcs.xml
+      - run: rector process --dry-run
+      - run: phpstan analyse
+      - run: phpunit --testsuite unit
 
   tests:
     name: PHP ${{ matrix.php }}
