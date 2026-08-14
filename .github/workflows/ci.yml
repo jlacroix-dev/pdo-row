@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Build PHP image
-        run: docker compose build php
+        run: docker compose run --rm php composer install --no-interaction --prefer-dist
 
       - name: Run tests
-        run: docker compose run --rm php
+        run: docker compose run --rm php composer test
