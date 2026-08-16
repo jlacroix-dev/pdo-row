@@ -9,5 +9,4 @@ $pdo = TestDatabase::mysql(false);
 
 return Config::configure($pdo)
     ->withDirectory(__DIR__ . '/generated/Native')
-    ->withNamespace('Tests\\Fixtures\\MySQL\\Generated\\Native')
-    ->onlyTables(['users']);
+    ->withNamespace('Tests\\Fixtures\\mysql\\generated\\Native');

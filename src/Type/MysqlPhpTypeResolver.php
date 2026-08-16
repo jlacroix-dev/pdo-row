@@ -34,12 +34,13 @@ final class MysqlPhpTypeResolver implements PhpTypeResolver
         }
 
         return match ($type) {
+            'bit',
             'tinyint',
             'smallint',
             'mediumint',
             'int',
-            'integer',
-            'year' => 'int',
+            'integer' => 'int',
+            'year' => 'string',
 
             'bigint' => 'int|string',
 

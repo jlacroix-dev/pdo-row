@@ -117,7 +117,3 @@ echo "  $MYSQL_DATABASE"
 echo
 echo "Host:"
 echo "  $MYSQL_HOST:$MYSQL_PORT"
-echo
-echo "Generated:"
-echo "  $GENERATED_NATIVE_ROW"
-echo "  $GENERATED_STRINGIFIED_ROW"

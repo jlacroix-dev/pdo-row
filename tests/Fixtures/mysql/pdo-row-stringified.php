@@ -9,5 +9,4 @@ $pdo = TestDatabase::mysql(true);
 
 return Config::configure($pdo)
     ->withDirectory(__DIR__ . '/generated/Stringified')
-    ->withNamespace('Tests\\Fixtures\\MySQL\\Generated\\Stringified')
-    ->onlyTables(['users']);
+    ->withNamespace('Tests\\Fixtures\\mysql\\generated\\Stringified');

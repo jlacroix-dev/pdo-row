@@ -84,6 +84,3 @@ fi
 echo "==> Integration fixtures ready"
 echo
 echo "Database:  $DATABASE"
-echo "Generated:"
-echo "  $GENERATED_NATIVE_ROW"
-echo "  $GENERATED_STRINGIFIED_ROW"

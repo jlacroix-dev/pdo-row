@@ -9,5 +9,4 @@ $pdo = TestDatabase::sqlite(true);
 
 return Config::configure($pdo)
     ->withDirectory(__DIR__ . '/generated/Stringified')
-    ->withNamespace('Tests\\Fixtures\\SQLite\\Generated\\Stringified')
-    ->onlyTables(['users']);
+    ->withNamespace('Tests\\Fixtures\\sqlite\\generated\\Stringified');
