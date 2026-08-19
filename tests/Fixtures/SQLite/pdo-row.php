@@ -8,5 +8,5 @@ use Tests\Fixtures\TestDatabase;
 $pdo = TestDatabase::sqlite(false);
 
 return Config::configure($pdo)
-    ->withDirectory(__DIR__ . '/generated/Native')
+    ->withDirectory(__DIR__ . '/Generated/Native')
     ->withNamespace('Tests\\Fixtures\\SQLite\\Generated\\Native');

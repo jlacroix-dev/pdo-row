@@ -8,5 +8,5 @@ use Tests\Fixtures\TestDatabase;
 $pdo = TestDatabase::mysql(false);
 
 return Config::configure($pdo)
-    ->withDirectory(__DIR__ . '/generated/Native')
+    ->withDirectory(__DIR__ . '/Generated/Native')
     ->withNamespace('Tests\\Fixtures\\MySQL\\Generated\\Native');
