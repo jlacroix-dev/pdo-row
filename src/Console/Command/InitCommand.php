@@ -36,7 +36,7 @@ final readonly class InitCommand implements Command
             return Command::FAILURE;
         }
 
-        $content = $this->renderer->render(__DIR__ . '/../../templates/pdo-row.tpl.php');
+        $content = $this->renderer->render(__DIR__ . '/../../../templates/pdo-row.tpl.php');
         $this->filesystem->write($filename, $content);
 
         $this->output->write("Created {$filename}");
