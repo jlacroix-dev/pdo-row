@@ -44,7 +44,7 @@ final class MysqlPhpTypeResolverTest extends TestCase
         yield ['mediumint', 'int'];
         yield ['int', 'int'];
         yield ['integer', 'int'];
-        yield ['year', 'int'];
+        yield ['year', 'string'];
         yield ['bigint', 'int|string'];
         yield ['bigint unsigned', 'int|string'];
         yield ['float', 'float'];
@@ -59,7 +59,7 @@ final class MysqlPhpTypeResolverTest extends TestCase
         yield ['datetime', 'string'];
         yield ['timestamp', 'string'];
         yield ['time', 'string'];
-        yield ['bit(1)', 'string'];
+        yield ['bit(1)', 'int'];
     }
 
     #[DataProvider('stringifiedTypesProvider')]

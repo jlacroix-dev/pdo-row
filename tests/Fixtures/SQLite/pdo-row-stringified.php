@@ -8,6 +8,5 @@ use Tests\Fixtures\TestDatabase;
 $pdo = TestDatabase::sqlite(true);
 
 return Config::configure($pdo)
-    ->withDirectory(__DIR__ . '/generated/Stringified')
-    ->withNamespace('Tests\\Fixtures\\SQLite\\Generated\\Stringified')
-    ->onlyTables(['users']);
+    ->withDirectory(__DIR__ . '/Generated/Stringified')
+    ->withNamespace('Tests\\Fixtures\\SQLite\\Generated\\Stringified');

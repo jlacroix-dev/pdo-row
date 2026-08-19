@@ -38,10 +38,10 @@ class SqlitePhpTypeResolverTest extends TestCase
 
     public static function nativeTypesProvider(): iterable
     {
-        yield ['INTEGER', 'int'];
+        yield ['INTEGER', 'int|float'];
         yield ['VARCHAR(255)', 'string'];
-        yield ['BOOLEAN', 'int'];
-        yield ['DATETIME', 'string'];
+        yield ['BOOLEAN', 'int|float|string'];
+        yield ['DATETIME', 'int|float|string'];
     }
 
     #[DataProvider('stringifiedTypesProvider')]

@@ -29,7 +29,7 @@ namespace <?= $namespace ?>;
  * Use with PDO::FETCH_ASSOC
  * @phpstan-type <?= $className ?>Assoc array{
 <?php foreach ($columns as $column) : ?>
- *      <?= $column->name ?>: <?= $column->nullable ? "?{$column->phpType}" : $column->phpType ?>,
+ *      <?= $column->name ?>: <?= $column->phpType . ($column->nullable ? '|null' : '') ?>,
 <?php endforeach; ?>
  * }
  */
@@ -37,6 +37,6 @@ final class <?= $className . PHP_EOL ?>
 {
 <?php foreach ($columns as $column) : ?>
     // <?= $column->databaseType ?> <?= $column->nullable ? 'NULL' : 'NOT NULL' ?><?= PHP_EOL ?>
-    public <?= $column->nullable ? "?{$column->phpType}" : $column->phpType ?> $<?= $column->name ?>;
+    public <?= $column->phpType . ($column->nullable ? '|null' : '') ?> $<?= $column->name ?>;
 <?php endforeach; ?>
 }

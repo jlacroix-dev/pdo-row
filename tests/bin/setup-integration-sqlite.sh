@@ -4,11 +4,11 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
-FIXTURES_DIR="$ROOT_DIR/tests/Fixtures/sqlite"
+FIXTURES_DIR="$ROOT_DIR/tests/Fixtures/SQLite"
 DATABASE="$FIXTURES_DIR/database.sqlite"
 SCHEMA="$FIXTURES_DIR/schema.sql"
 PDO_ROW="$ROOT_DIR/bin/pdo-row"
-GENERATED_DIR="$FIXTURES_DIR/generated"
+GENERATED_DIR="$FIXTURES_DIR/Generated"
 
 echo "==> Preparing SQLite integration fixtures"
 
@@ -84,6 +84,3 @@ fi
 echo "==> Integration fixtures ready"
 echo
 echo "Database:  $DATABASE"
-echo "Generated:"
-echo "  $GENERATED_NATIVE_ROW"
-echo "  $GENERATED_STRINGIFIED_ROW"

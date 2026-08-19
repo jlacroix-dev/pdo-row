@@ -13,7 +13,7 @@ final class SqlitePhpTypeResolver implements PhpTypeResolver
         return 'sqlite';
     }
 
-    public function resolve(DatabaseColumn $column, FetchTypeConfiguration $configuration,): string
+    public function resolve(DatabaseColumn $column, FetchTypeConfiguration $configuration): string
     {
         if ($configuration->stringifyFetches) {
             return 'string';
@@ -27,13 +27,39 @@ final class SqlitePhpTypeResolver implements PhpTypeResolver
             ) ?? $column->databaseType
         );
 
-        return match ($type) {
-            'boolean' => 'int',
-            'integer' => 'int',
-            'real' => 'float',
+        $affinity = match ($type) {
+            'int' => 'integer',
+            'integer' => 'integer',
+            'tinyint' => 'integer',
+            'smallint' => 'integer',
+            'mediumint' => 'integer',
+            'bigint' => 'integer',
+            'int2' => 'integer',
+            'int8' => 'integer',
+            'character' => 'text',
+            'varchar' => 'text',
+            'nchar' => 'text',
+            'nvarchar' => 'text',
+            'text' => 'text',
+            'clob' => 'text',
+            'blob' => 'blob',
+            'real' => 'real',
+            'double' => 'real',
+            'float' => 'real',
+            'numeric' => 'numeric',
+            'decimal' => 'numeric',
+            'boolean' => 'numeric',
+            'date' => 'numeric',
+            'datetime' => 'numeric',
+            default => 'text',
+        };
+
+        return match ($affinity) {
+            'integer' => 'int|float',
             'text' => 'string',
             'blob' => 'string',
-            default => 'string',
+            'real' => 'float',
+            'numeric' => 'int|float|string',
         };
     }
 }

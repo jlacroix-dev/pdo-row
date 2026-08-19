@@ -4,10 +4,10 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
-FIXTURES_DIR="$ROOT_DIR/tests/Fixtures/mysql"
+FIXTURES_DIR="$ROOT_DIR/tests/Fixtures/MySQL"
 SCHEMA="$FIXTURES_DIR/schema.sql"
 PDO_ROW="$ROOT_DIR/bin/pdo-row"
-GENERATED_DIR="$FIXTURES_DIR/generated"
+GENERATED_DIR="$FIXTURES_DIR/Generated"
 
 MYSQL_HOST="${MYSQL_HOST:-127.0.0.1}"
 MYSQL_PORT="${MYSQL_PORT:-3306}"
@@ -117,7 +117,3 @@ echo "  $MYSQL_DATABASE"
 echo
 echo "Host:"
 echo "  $MYSQL_HOST:$MYSQL_PORT"
-echo
-echo "Generated:"
-echo "  $GENERATED_NATIVE_ROW"
-echo "  $GENERATED_STRINGIFIED_ROW"

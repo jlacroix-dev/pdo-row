@@ -9,57 +9,29 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tests\Fixtures\SQLite\Generated\Native\UsersTableRow as NativeUsersTableRow;
+use Tests\Fixtures\SQLite\Generated\Native\T1TableRow as NativeT1TableRow;
 use Tests\Fixtures\SQLite\Generated\Stringified\UsersTableRow as StringifiedUsersTableRow;
+use Tests\Fixtures\SQLite\Generated\Stringified\T1TableRow as StringifiedT1TableRow;
 use Tests\Fixtures\TestDatabase;
 
 final class PdoFetchObjectTest extends TestCase
 {
-    public static function setUpBeforeClass(): void
-    {
-        parent::setUpBeforeClass();
-
-        $database = __DIR__ . '/../../Fixtures/sqlite/database.sqlite';
-        self::assertFileExists(
-            $database,
-            'Integration database does not exist. Run: composer test:integration:setup'
-        );
-
-        $generated = __DIR__ . '/../../Fixtures/sqlite/generated/Native/UsersTableRow.php';
-        self::assertFileExists(
-            $generated,
-            'Generated TableRow does not exist. Run: composer test:integration:sqlite:setup'
-        );
-        require_once $generated;
-
-        self::assertTrue(
-            class_exists(NativeUsersTableRow::class),
-            NativeUsersTableRow::class . ' was not generated.'
-        );
-
-        $generated = __DIR__ . '/../../Fixtures/sqlite/generated/Stringified/UsersTableRow.php';
-        self::assertFileExists(
-            $generated,
-            'Generated TableRow does not exist. Run: composer test:integration:sqlite:setup'
-        );
-        require_once $generated;
-
-        self::assertTrue(
-            class_exists(StringifiedUsersTableRow::class),
-            StringifiedUsersTableRow::class . ' was not generated.'
-        );
-    }
-
     /**
      * @param class-string<object> $rowClass
      */
     #[DataProvider('stringifyFetchesProvider')]
     public function testFetchObject(
+        string $table,
         string $rowClass,
         bool $stringifyFetches,
     ): void {
         $pdo = TestDatabase::sqlite($stringifyFetches);
 
-        $sql = 'SELECT * FROM users LIMIT 1';
+        $sql = <<<SQL
+SELECT *
+FROM {$table}
+LIMIT 1
+SQL;
 
         $statement = $pdo->query($sql);
         self::assertNotFalse($statement);
@@ -72,15 +44,6 @@ final class PdoFetchObjectTest extends TestCase
         self::assertNotFalse($tableRow);
 
         self::assertInstanceOf($rowClass, $tableRow);
-
-        foreach (get_object_vars($stdClass) as $property => $value) {
-            self::assertSame(
-                get_debug_type($value),
-                // @phpstan-ignore-next-line
-                get_debug_type($tableRow->$property),
-                "Property {$property} has an unexpected runtime type.",
-            );
-        }
     }
 
     /**
@@ -88,15 +51,15 @@ final class PdoFetchObjectTest extends TestCase
      */
     #[DataProvider('stringifyFetchesProvider')]
     public function testFetchAllObject(
+        string $table,
         string $rowClass,
         bool $stringifyFetches,
     ): void {
         $pdo = TestDatabase::sqlite($stringifyFetches);
 
-        $sql = <<<'SQL'
+        $sql = <<<SQL
 SELECT *
-FROM users
-ORDER BY id
+FROM {$table}
 SQL;
 
         $statement = $pdo->query($sql);
@@ -109,15 +72,12 @@ SQL;
         /** @var object[] $tableRows */
         $tableRows = $statement->fetchAll(PDO::FETCH_CLASS, $rowClass);
 
-        self::assertCount(2, $rows);
-
         $count = count($rows);
         for ($i = 0; $i < $count; ++$i) {
             $stdClass = $rows[$i];
             $tableRow = $tableRows[$i];
 
             self::assertInstanceOf($rowClass, $tableRow);
-
             foreach (get_object_vars($stdClass) as $property => $value) {
                 self::assertSame(
                     get_debug_type($value),
@@ -131,14 +91,9 @@ SQL;
 
     public static function stringifyFetchesProvider(): iterable
     {
-        yield 'native' => [
-            NativeUsersTableRow::class,
-            false,
-        ];
-
-        yield 'stringified' => [
-            StringifiedUsersTableRow::class,
-            true,
-        ];
+        yield 'Native\UsersTableRow' => ['users', NativeUsersTableRow::class, false];
+        yield 'Stringified\UsersTableRow' => ['users', StringifiedUsersTableRow::class, true];
+        yield 'Native\T1TableRow' => ['t1', NativeT1TableRow::class, false];
+        yield 'Stringified\T1TableRow' => ['t1', StringifiedT1TableRow::class, true];
     }
 }

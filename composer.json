@@ -39,7 +39,8 @@
     "psr-4": {
       "Tests\\Unit\\": "tests/Unit/",
       "Tests\\Integration\\": "tests/Integration/",
-      "Tests\\Fixtures\\": "tests/Fixtures/"
+      "Tests\\Fixtures\\": "tests/Fixtures/",
+      "Tests\\Traits\\": "tests/Traits/"
     },
     "files": [
       "src/functions/helpers.php"
