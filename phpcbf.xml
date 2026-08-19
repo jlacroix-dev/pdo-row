@@ -8,7 +8,7 @@
     <file>templates</file>
     <file>tests</file>
 
-    <exclude-pattern>tests/Fixtures/*/generated/*</exclude-pattern>
+    <exclude-pattern>tests/Fixtures/*/Generated/*</exclude-pattern>
 
     <arg name="extensions" value="php"/>
 

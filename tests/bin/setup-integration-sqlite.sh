@@ -8,7 +8,7 @@ FIXTURES_DIR="$ROOT_DIR/tests/Fixtures/SQLite"
 DATABASE="$FIXTURES_DIR/database.sqlite"
 SCHEMA="$FIXTURES_DIR/schema.sql"
 PDO_ROW="$ROOT_DIR/bin/pdo-row"
-GENERATED_DIR="$FIXTURES_DIR/generated"
+GENERATED_DIR="$FIXTURES_DIR/Generated"
 
 echo "==> Preparing SQLite integration fixtures"
 
