@@ -28,3 +28,36 @@ VALUES (1,
         0,
         'Jane',
         '2026-08-08 13:00:00');
+
+DROP TABLE IF EXISTS t1;
+
+CREATE TABLE t1
+(
+    text_col    TEXT    NULL,
+    numeric_col NUMERIC NULL,
+    integer_col INTEGER NULL,
+    real_col    REAL    NULL,
+    blob_col    BLOB    NULL
+);
+
+INSERT INTO t1 (text_col,
+                numeric_col,
+                integer_col,
+                real_col,
+                blob_col)
+VALUES (NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL),
+       ('aaa',
+        123,
+        456,
+        2.3,
+        'bbb'),
+       ('123',
+        2.3,
+        456.5,
+        2,
+        'bbb');
+

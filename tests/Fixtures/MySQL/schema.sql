@@ -159,46 +159,41 @@ VALUES (null,
 
 -- String --
 # https://dev.mysql.com/doc/refman/8.0/en/string-type-syntax.html
-# DROP TABLE IF EXISTS string_types;
-#
-# CREATE TABLE string_types
-# (
-#     char_col      CHAR      NULL,
-#     varchar_col  VARCHAR  NULL,
-#     binary_col BINARY NULL,
-#     varbinary_col      VARBINARY      NULL,
-#     blob_col      BLOB      NULL,
-#     text_col      TEXT      NULL,
-#     enum_col      ENUM      NULL,
-#     set_col      SET      NULL,
-#
-# ) ENGINE = InnoDB;
-#
-# INSERT INTO string_types (date_col,
-#                           datetime_col,
-#                           timestamp_col,
-#                           time_col,
-#                           year_col)
-# VALUES (null,
-#         null,
-#         null,
-#         null,
-#         null),
-# #     min value
-#        ('1000-01-01',
-#         '1000-01-01 00:00:00.000000',
-#         '1970-01-01 00:00:01.000000',
-#         '-838:59:59.000000',
-#         '1901'),
-# #     value
-#        ('2026-08-15',
-#         '2026-08-15 12:05:36.499999',
-#         '2026-08-15 12:05:36.499999',
-#         '1:25:00.000000',
-#         2026),
-# #     max value
-#        ('9999-12-31',
-#         '9999-12-31 23:59:59.499999',
-#         '2038-01-19 03:14:07.499999',
-#         '838:59:59.000000',
-#         '2155');
+DROP TABLE IF EXISTS string_types;
+
+CREATE TABLE string_types
+(
+    char_col      CHAR(10)                            NULL,
+    varchar_col   VARCHAR(64)                         NULL,
+    binary_col    BINARY(8)                           NULL,
+    varbinary_col VARBINARY(16)                       NULL,
+    blob_col      BLOB                                NULL,
+    text_col      TEXT                                NULL,
+    enum_col      ENUM ('value1', 'value2', 'value3') NULL,
+    set_col       SET ('value1', 'value2', 'value3')  NULL
+) ENGINE = InnoDB;
+
+INSERT INTO string_types (char_col,
+                          varchar_col,
+                          binary_col,
+                          varbinary_col,
+                          blob_col,
+                          text_col,
+                          enum_col,
+                          set_col)
+VALUES (null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null),
+       ('aaa',
+        'bbb',
+        'ccc',
+        'ddd',
+        'eee',
+        'fff',
+        'value1',
+        'value1,value2');

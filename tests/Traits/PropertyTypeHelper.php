@@ -44,11 +44,14 @@ trait PropertyTypeHelper
             $typeName = $type->getName();
             return $type->allowsNull()
                 ? ['null', $typeName]
-                : [];
+                : [$typeName];
         }
         if ($type instanceof ReflectionUnionType) {
             $types = $type->getTypes();
-            return array_map(function (ReflectionNamedType $type) {
+            $types = array_filter($types, function (ReflectionIntersectionType|ReflectionNamedType $type): bool {
+                return $type instanceof ReflectionNamedType;
+            });
+            return array_map(function (ReflectionNamedType $type): string {
                 return $type->getName();
             }, $types);
         }

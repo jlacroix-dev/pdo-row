@@ -4,7 +4,7 @@
 /var
 /vendor
 
-/tests/Fixtures/sqlite/database.sqlite
-/tests/Fixtures/sqlite/generated/
+/tests/Fixtures/SQLite/database.sqlite
+/tests/Fixtures/SQLite/Generated/
 
-/tests/Fixtures/mysql/generated/
+/tests/Fixtures/MySQL/Generated/

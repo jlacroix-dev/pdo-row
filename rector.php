@@ -10,7 +10,7 @@ return RectorConfig::configure()
         __DIR__ . '/tests',
     ])
     ->withSkip([
-        __DIR__ . '/tests/Fixtures/*/generated',
+        __DIR__ . '/tests/Fixtures/*/Generated',
     ])
     ->withImportNames()
     ->withPreparedSets(

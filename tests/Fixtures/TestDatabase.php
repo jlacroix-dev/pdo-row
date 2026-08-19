@@ -11,7 +11,7 @@ final class TestDatabase
     public static function sqlite(bool $stringifyFetches): PDO
     {
         return self::create(
-            dsn: 'sqlite:' . __DIR__ . '/sqlite/database.sqlite',
+            dsn: 'sqlite:' . __DIR__ . '/SQLite/database.sqlite',
             stringifyFetches: $stringifyFetches,
         );
     }

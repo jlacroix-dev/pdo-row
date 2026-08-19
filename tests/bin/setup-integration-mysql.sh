@@ -4,7 +4,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
-FIXTURES_DIR="$ROOT_DIR/tests/Fixtures/mysql"
+FIXTURES_DIR="$ROOT_DIR/tests/Fixtures/MySQL"
 SCHEMA="$FIXTURES_DIR/schema.sql"
 PDO_ROW="$ROOT_DIR/bin/pdo-row"
 GENERATED_DIR="$FIXTURES_DIR/generated"

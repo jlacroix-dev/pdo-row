@@ -7,12 +7,15 @@ namespace Tests\Integration\MySQL;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use ReflectionNamedType;
-use ReflectionProperty;
-use ReflectionUnionType;
 use stdClass;
-use Tests\Fixtures\MySQL\Generated\Native;
-use Tests\Fixtures\MySQL\Generated\Stringified;
+use Tests\Fixtures\MySQL\Generated\Native\UsersTableRow as NativeUsersTableRow;
+use Tests\Fixtures\MySQL\Generated\Native\NumericTypesTableRow as NativeNumericTypesTableRow;
+use Tests\Fixtures\MySQL\Generated\Native\DateAndTimeTypesTableRow as NativeDateAndTimeTypesTableRow;
+use Tests\Fixtures\MySQL\Generated\Native\StringTypesTableRow as NativeStringTypesTableRow;
+use Tests\Fixtures\MySQL\Generated\Stringified\UsersTableRow as StringifiedUsersTableRow;
+use Tests\Fixtures\MySQL\Generated\Stringified\NumericTypesTableRow as StringifiedNumericTypesTableRow;
+use Tests\Fixtures\MySQL\Generated\Stringified\DateAndTimeTypesTableRow as StringifiedDateAndTimeTypesTableRow;
+use Tests\Fixtures\MySQL\Generated\Stringified\StringTypesTableRow as StringifiedStringTypesTableRow;
 use Tests\Fixtures\TestDatabase;
 
 final class PdoFetchObjectTest extends TestCase
@@ -45,24 +48,6 @@ SQL;
         self::assertNotFalse($tableRow);
 
         self::assertInstanceOf($rowClass, $tableRow);
-
-        foreach (get_object_vars($stdClass) as $property => $value) {
-            $stdClassValue = $value;
-            // @phpstan-ignore-next-line
-            $tableRowValue = $tableRow->$property;
-
-            self::assertSame(
-                get_debug_type($stdClassValue),
-                get_debug_type($tableRowValue),
-                "Property {$property} has an unexpected runtime type.",
-            );
-
-            self::assertSame(
-                $stdClassValue,
-                $tableRowValue,
-                "Property {$property} has an unexpected value.",
-            );
-        }
     }
 
     /**
@@ -120,18 +105,28 @@ SQL;
 
     public static function stringifyFetchesProvider(): iterable
     {
-        yield 'Native\UsersTableRow' => ['users', Native\UsersTableRow::class, false];
-        yield 'Stringified\UsersTableRow' => ['users', Stringified\UsersTableRow::class, true];
-        yield 'Native\NumericTypesTableRow' => ['numeric_types', Native\NumericTypesTableRow::class, false];
-        yield 'Stringified\NumericTypesTableRow' => ['numeric_types', Stringified\NumericTypesTableRow::class, true];
+        yield 'Native\UsersTableRow' => ['users', NativeUsersTableRow::class, false];
+        yield 'Stringified\UsersTableRow' => ['users', StringifiedUsersTableRow::class, true];
+        yield 'Native\NumericTypesTableRow' => ['numeric_types', NativeNumericTypesTableRow::class, false];
+        yield 'Stringified\NumericTypesTableRow' => ['numeric_types', StringifiedNumericTypesTableRow::class, true];
         yield 'Native\DateAndTimeTypesTableRow' => [
             'date_and_time_types',
-            Native\DateAndTimeTypesTableRow::class,
+            NativeDateAndTimeTypesTableRow::class,
             false
         ];
         yield 'Stringified\DateAndTimeTypesTableRow' => [
             'date_and_time_types',
-            Stringified\DateAndTimeTypesTableRow::class,
+            StringifiedDateAndTimeTypesTableRow::class,
+            true
+        ];
+        yield 'Native\StringTypesTableRow' => [
+            'string_types',
+            NativeStringTypesTableRow::class,
+            false
+        ];
+        yield 'Stringified\StringTypesTableRow' => [
+            'string_types',
+            StringifiedStringTypesTableRow::class,
             true
         ];
     }

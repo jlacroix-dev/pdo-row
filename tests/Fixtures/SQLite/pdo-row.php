@@ -9,4 +9,4 @@ $pdo = TestDatabase::sqlite(false);
 
 return Config::configure($pdo)
     ->withDirectory(__DIR__ . '/generated/Native')
-    ->withNamespace('Tests\\Fixtures\\sqlite\\generated\\Native');
+    ->withNamespace('Tests\\Fixtures\\SQLite\\Generated\\Native');

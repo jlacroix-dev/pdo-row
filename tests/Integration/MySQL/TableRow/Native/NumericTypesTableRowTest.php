@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Tests\Integration\MySQL\TableRow\Native;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use Tests\Fixtures\mysql\generated\Native\NumericTypesTableRow;
-
+use Tests\Fixtures\MySQL\Generated\Native\NumericTypesTableRow;
 use PHPUnit\Framework\TestCase;
 use Tests\Traits\PropertyTypeHelper;
 
