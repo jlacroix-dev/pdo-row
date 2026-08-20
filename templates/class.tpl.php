@@ -12,10 +12,6 @@ use JlacroixDev\PdoRow\Model\Column;
 ?>
 <?= '<?php' . PHP_EOL ?>
 
-declare(strict_types=1);
-
-namespace <?= $namespace ?>;
-
 /**
  * This file was generated automatically.
  *
@@ -24,6 +20,10 @@ namespace <?= $namespace ?>;
  *
  * DO NOT EDIT MANUALLY.
  */
+
+declare(strict_types=1);
+
+namespace <?= $namespace ?>;
 
 /**
  * Use with PDO::FETCH_ASSOC

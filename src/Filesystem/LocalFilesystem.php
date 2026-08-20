@@ -42,4 +42,9 @@ final class LocalFilesystem implements Filesystem
     {
         return require $file;
     }
+
+    public function copy(string $from, string $to): void
+    {
+        copy($from, $to);
+    }
 }

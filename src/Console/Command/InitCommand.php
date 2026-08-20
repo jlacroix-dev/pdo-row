@@ -11,7 +11,6 @@ use JlacroixDev\PdoRow\Template\TemplateRenderer;
 final readonly class InitCommand implements Command
 {
     public function __construct(
-        private TemplateRenderer $renderer,
         private Filesystem $filesystem,
         private Output $output,
     ) {
@@ -36,8 +35,8 @@ final readonly class InitCommand implements Command
             return Command::FAILURE;
         }
 
-        $content = $this->renderer->render(__DIR__ . '/../../../templates/pdo-row.tpl.php');
-        $this->filesystem->write($filename, $content);
+        $source = __DIR__ . '/../../../../templates/pdo-row.tpl.php';
+        $this->filesystem->copy($source, $filename);
 
         $this->output->write("Created {$filename}");
 

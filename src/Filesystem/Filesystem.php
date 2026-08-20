@@ -13,4 +13,6 @@ interface Filesystem
     public function ensureDirectory(string $directory): void;
 
     public function require(string $file): mixed;
+
+    public function copy(string $from, string $to): void;
 }

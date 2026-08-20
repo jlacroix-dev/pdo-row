@@ -43,7 +43,7 @@ final class ApplicationFactory
         $output = new Output();
 
         $commands = [
-            new InitCommand($renderer, $filesystem, $output),
+            new InitCommand($filesystem, $output),
             new GenerateCommand(
                 new GenerateOptionsParser(),
                 new ConfigLoader($filesystem),
