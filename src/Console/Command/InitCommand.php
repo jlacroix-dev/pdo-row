@@ -6,7 +6,6 @@ namespace JlacroixDev\PdoRow\Console\Command;
 
 use JlacroixDev\PdoRow\Console\Output;
 use JlacroixDev\PdoRow\Filesystem\Filesystem;
-use JlacroixDev\PdoRow\Template\TemplateRenderer;
 
 final readonly class InitCommand implements Command
 {
