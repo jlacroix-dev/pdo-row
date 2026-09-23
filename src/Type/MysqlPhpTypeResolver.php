@@ -23,7 +23,8 @@ final class MysqlPhpTypeResolver implements PhpTypeResolver
         }
 
         $type = $column->databaseType;
-        $phpType = match ($type) {
+
+        return match ($type) {
             'STRING' => 'string',
             'VAR_STRING' => 'string',
             'DATE' => 'string',
@@ -44,7 +45,5 @@ final class MysqlPhpTypeResolver implements PhpTypeResolver
 
             default => throw new RuntimeException('Unsuported type'),
         };
-
-        return $phpType;
     }
 }

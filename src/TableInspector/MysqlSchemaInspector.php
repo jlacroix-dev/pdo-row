@@ -7,9 +7,9 @@ namespace JlacroixDev\PdoRow\TableInspector;
 use Exception;
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use JlacroixDev\PdoRow\Model\Table;
-use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\ColumnsTableRow;
 use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\TablesTableRow;
 use PDO;
+use RuntimeException;
 
 final class MysqlSchemaInspector implements SchemaInspector
 {
@@ -59,12 +59,16 @@ SQL;
 
         $count = $stmt->columnCount();
 
+        $columns = [];
         for ($i = 0; $i < $count; $i++) {
             $meta = $stmt->getColumnMeta($i);
+            if ($meta === false) {
+                throw new RuntimeException('Not able to get column meta');
+            }
             $columns[] = new DatabaseColumn(
                 name: $meta['name'],
-                databaseType: $meta['native_type'],
-                nullable: !in_array('not_null', $meta['flags']),
+                databaseType: $meta['native_type'] ?? '',
+                nullable: !in_array('not_null', $meta['flags'], true),
             );
         }
 

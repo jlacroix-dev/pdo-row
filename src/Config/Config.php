@@ -18,7 +18,9 @@ final readonly class Config
     public function __toString(): string
     {
         $phpVersion = phpversion();
+        /** @var string $driverName */
         $driverName = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        /** @var string $serverVersion */
         $serverVersion = $this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
         return <<<TXT
 # Config

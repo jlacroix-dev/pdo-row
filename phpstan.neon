@@ -4,11 +4,11 @@ parameters:
 		- src
 		- tests
 	ignoreErrors:
-	    -
-	        identifier: missingType.iterableValue
-	        paths:
-	            - tests/**
-	        message: '#::dataProvider[^(\s]*\(\)#'
+#	    -
+#	        identifier: missingType.iterableValue
+#	        paths:
+#	            - tests/**
+#	        message: '#::dataProvider[^(\s]*\(\)#'
 	    -
 	        identifier: missingType.iterableValue
 	        paths:
