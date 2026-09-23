@@ -51,23 +51,20 @@ SQL;
     {
         $sql = <<<SQL
 SELECT *
-FROM information_schema.columns
-WHERE TABLE_SCHEMA = DATABASE()
-AND TABLE_NAME = ?
-ORDER BY ORDINAL_POSITION
+FROM `{$table}`
+LIMIT 0
 SQL;
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$table]);
+        $stmt->execute();
 
-        $columns = [];
+        $count = $stmt->columnCount();
 
-        /** @var ColumnsTableRow[] $rows */
-        $rows = $stmt->fetchAll(PDO::FETCH_CLASS, ColumnsTableRow::class);
-        foreach ($rows as $row) {
+        for ($i = 0; $i < $count; $i++) {
+            $meta = $stmt->getColumnMeta($i);
             $columns[] = new DatabaseColumn(
-                name: $row->COLUMN_NAME ?? '',
-                databaseType: $row->COLUMN_TYPE,
-                nullable: $row->IS_NULLABLE === 'YES',
+                name: $meta['name'],
+                databaseType: $meta['native_type'],
+                nullable: !in_array('not_null', $meta['flags']),
             );
         }
 

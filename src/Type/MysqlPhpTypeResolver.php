@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JlacroixDev\PdoRow\Type;
 
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
+use RuntimeException;
 
 final class MysqlPhpTypeResolver implements PhpTypeResolver
 {
@@ -21,34 +22,29 @@ final class MysqlPhpTypeResolver implements PhpTypeResolver
             return 'string';
         }
 
-        $type = strtolower(
-            preg_replace(
-                '/\(.*/',
-                '',
-                $column->databaseType
-            ) ?? $column->databaseType
-        );
+        $type = $column->databaseType;
+        $phpType = match ($type) {
+            'STRING' => 'string',
+            'VAR_STRING' => 'string',
+            'DATE' => 'string',
+            'DATETIME' => 'string',
+            'TIME' => 'string',
+            'TIMESTAMP' => 'string',
+            'YEAR' => 'string',
+            'TINY' => 'int',
+            'SHORT' => 'int',
+            'INT24' => 'int',
+            'LONG' => 'int',
+            'LONGLONG' => 'int|string',
+            'NEWDECIMAL' => 'string',
+            'FLOAT' => 'float',
+            'DOUBLE' => 'float',
+            'BLOB' => 'string',
+            'BIT' => 'int',
 
-        if (str_ends_with($type, ' unsigned')) {
-            $type = substr($type, 0, -9);
-        }
-
-        return match ($type) {
-            'bit',
-            'tinyint',
-            'smallint',
-            'mediumint',
-            'int',
-            'integer' => 'int',
-            'year' => 'string',
-
-            'bigint' => 'int|string',
-
-            'float',
-            'double',
-            'real' => 'float',
-
-            default => 'string',
+            default => throw new RuntimeException('Unsuported type'),
         };
+
+        return $phpType;
     }
 }

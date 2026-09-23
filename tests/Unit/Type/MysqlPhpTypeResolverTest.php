@@ -38,28 +38,23 @@ final class MysqlPhpTypeResolverTest extends TestCase
 
     public static function nativeTypesProvider(): iterable
     {
-        yield ['tinyint', 'int'];
-        yield ['tinyint(1)', 'int'];
-        yield ['smallint', 'int'];
-        yield ['mediumint', 'int'];
-        yield ['int', 'int'];
-        yield ['integer', 'int'];
-        yield ['year', 'string'];
-        yield ['bigint', 'int|string'];
-        yield ['bigint unsigned', 'int|string'];
-        yield ['float', 'float'];
-        yield ['double', 'float'];
-        yield ['real', 'float'];
-        yield ['decimal(10,2)', 'string'];
-        yield ['numeric(10,2)', 'string'];
-        yield ['varchar(255)', 'string'];
-        yield ['text', 'string'];
-        yield ['json', 'string'];
-        yield ['date', 'string'];
-        yield ['datetime', 'string'];
-        yield ['timestamp', 'string'];
-        yield ['time', 'string'];
-        yield ['bit(1)', 'int'];
+        yield ['STRING', 'string'];
+        yield ['VAR_STRING', 'string'];
+        yield ['DATE', 'string'];
+        yield ['DATETIME', 'string'];
+        yield ['TIME', 'string'];
+        yield ['TIMESTAMP', 'string'];
+        yield ['YEAR', 'string'];
+        yield ['TINY', 'int'];
+        yield ['SHORT', 'int'];
+        yield ['INT24', 'int'];
+        yield ['LONG', 'int'];
+        yield ['LONGLONG', 'int|string'];
+        yield ['NEWDECIMAL', 'string'];
+        yield ['FLOAT', 'float'];
+        yield ['DOUBLE', 'float'];
+        yield ['BLOB', 'string'];
+        yield ['BIT', 'int'];
     }
 
     #[DataProvider('stringifiedTypesProvider')]
@@ -87,10 +82,9 @@ final class MysqlPhpTypeResolverTest extends TestCase
 
     public static function stringifiedTypesProvider(): iterable
     {
-        yield ['int'];
-        yield ['bigint'];
-        yield ['double'];
-        yield ['decimal(10,2)'];
-        yield ['json'];
+        yield ['STRING'];
+        yield ['TINY'];
+        yield ['INT24'];
+        yield ['FLOAT'];
     }
 }
