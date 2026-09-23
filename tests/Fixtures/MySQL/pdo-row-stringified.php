@@ -7,6 +7,8 @@ use Tests\Fixtures\TestDatabase;
 
 $pdo = TestDatabase::mysql(true);
 
-return Config::configure($pdo)
-    ->withDirectory(__DIR__ . '/Generated/Stringified')
-    ->withNamespace('Tests\\Fixtures\\MySQL\\Generated\\Stringified');
+return new Config(
+    pdo: $pdo,
+    directory: __DIR__ . '/Generated/Stringified',
+    namespace: 'Tests\\Fixtures\\MySQL\\Generated\\Stringified',
+);

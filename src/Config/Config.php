@@ -4,145 +4,30 @@ declare(strict_types=1);
 
 namespace JlacroixDev\PdoRow\Config;
 
-use JlacroixDev\PdoRow\Naming\MyNaming;
-use JlacroixDev\PdoRow\Naming\NamingStrategy;
-use LogicException;
 use PDO;
 
-final class Config
+final readonly class Config
 {
-    private PDO $pdo;
-    private string $directory = 'src/Repository/PDO/TableRow';
-    private string $namespace = 'App\\Repository\\PDO\\TableRow';
-    private string $template = __DIR__ . '/../../templates/class.tpl.php';
-    private ?NamingStrategy $namingStrategy = null;
-    /** @var string[]|null */
-    private ?array $onlyTables = null;
-    /** @var string[]|null  */
-    private ?array $exceptTables = null;
-    private ?string $phpVersion = null;
-
-    public function __construct(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-    }
-
-    public static function configure(PDO $pdo): self
-    {
-        return new Config($pdo);
-    }
-
-    public function withDirectory(string $directory): self
-    {
-        $this->directory = $directory;
-        return $this;
-    }
-
-    public function withNamespace(string $namespace): self
-    {
-        $this->namespace = $namespace;
-        return $this;
-    }
-
-    public function withTemplate(string $template): self
-    {
-        $this->template = $template;
-        return $this;
-    }
-
-    public function withNamingStrategy(NamingStrategy $namingStrategy): self
-    {
-        $this->namingStrategy = $namingStrategy;
-        return $this;
-    }
-
-    /**
-     * @param string[] $tables
-     */
-    public function onlyTables(array $tables): self
-    {
-        if ($this->exceptTables !== null) {
-            throw new LogicException('Cannot use onlyTables() and exceptTables() together.');
-        }
-        $this->onlyTables = $tables;
-        return $this;
-    }
-
-    /**
-     * @param string[] $tables
-     */
-    public function exceptTables(array $tables): self
-    {
-        if ($this->onlyTables !== null) {
-            throw new LogicException('Cannot use onlyTables() and exceptTables() together.');
-        }
-        $this->exceptTables = $tables;
-        return $this;
-    }
-
-
-    public function withPhpVersion(string $phpVersion): self
-    {
-        $this->phpVersion = $phpVersion;
-        return $this;
-    }
-
-    public function getPdo(): PDO
-    {
-        return $this->pdo;
-    }
-
-    public function getDirectory(): string
-    {
-        return $this->directory;
-    }
-
-    public function getNamespace(): string
-    {
-        return $this->namespace;
-    }
-
-    public function getTemplate(): string
-    {
-        return $this->template;
-    }
-
-    public function getNamingStrategy(): NamingStrategy
-    {
-        return $this->namingStrategy ?? new MyNaming();
-    }
-
-    /**
-     * @return string[]|null
-     */
-    public function getOnlyTables(): ?array
-    {
-        return $this->onlyTables;
-    }
-
-    /**
-     * @return string[]|null
-     */
-    public function getExceptTables(): ?array
-    {
-        return $this->exceptTables;
-    }
-
-    public function getPhpVersion(): string
-    {
-        return is_null($this->phpVersion)
-            ? phpversion()
-            : $this->phpVersion;
+    public function __construct(
+        public PDO $pdo,
+        public string $directory = 'src/Repository/PDO/TableRow',
+        public string $namespace = 'App\\Repository\\PDO\\TableRow',
+    ) {
     }
 
     public function __toString(): string
     {
-        $phpVersion = $this->getPhpVersion();
+        $phpVersion = phpversion();
+        /** @var string $driverName */
+        $driverName = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        /** @var string $serverVersion */
+        $serverVersion = $this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION);
         return <<<TXT
 # Config
+PHP Version: $phpVersion
+Database: $driverName $serverVersion
 Directory: $this->directory
 Namespace: $this->namespace
-PHP Version: $phpVersion
 
 TXT;
     }

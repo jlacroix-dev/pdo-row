@@ -9,11 +9,9 @@ use JlacroixDev\PdoRow\Console\Output;
 use JlacroixDev\PdoRow\Filesystem\Filesystem;
 use JlacroixDev\PdoRow\Generation\GeneratedFile;
 use JlacroixDev\PdoRow\Generation\GeneratedFileWriter;
-use JlacroixDev\PdoRow\Generation\TableFilter;
 use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use JlacroixDev\PdoRow\TableInspector\TableInspector;
-use JlacroixDev\PdoRow\Template\TemplateRenderer;
 use JlacroixDev\PdoRow\Package;
 use JlacroixDev\PdoRow\Type\FetchTypeConfiguration;
 use JlacroixDev\PdoRow\Type\PhpTypeResolverCollection;
@@ -24,10 +22,8 @@ final readonly class GenerateCommand implements Command
     public function __construct(
         private GenerateOptionsParser $optionsParser,
         private ConfigLoader $configLoader,
-        private TableFilter $tableFilter,
         private TableInspector $tableInspector,
         private PhpTypeResolverCollection $phpTypeResolvers,
-        private TemplateRenderer $renderer,
         private GeneratedFileWriter $writer,
         private Filesystem $filesystem,
         private Output $output,
@@ -74,20 +70,14 @@ HELP;
 
         $this->output->write($config->__toString());
 
-        $directory = $config->getDirectory();
+        $directory = $config->directory;
         $this->filesystem->ensureDirectory($directory);
 
         $this->output->write('Start generating...');
 
-        $pdo = $config->getPdo();
+        $pdo = $config->pdo;
         $tables = $this->tableInspector
             ->inspect($pdo);
-
-        $tables = $this->tableFilter->filter(
-            $tables,
-            $config->getOnlyTables(),
-            $config->getExceptTables(),
-        );
 
         /** @var string $driverName */
         $driverName = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
@@ -114,12 +104,12 @@ HELP;
                 $table->columns,
             );
 
-            $className = $config->getNamingStrategy()->class($table->name);
+            $className = $this->className($table->name);
             $filename = "{$className}.php";
 
-            $code = $this->renderer->render($config->getTemplate(), [
+            $code = $this->render(__DIR__ . '/../../../templates/class.tpl.php', [
                 'version' => Package::version(),
-                'namespace' => $config->getNamespace(),
+                'namespace' => $config->namespace,
                 'className' => $className,
                 'columns' => $columns,
             ]);
@@ -128,10 +118,30 @@ HELP;
         }
 
         $this->writer->write(
-            $config->getDirectory(),
+            $config->directory,
             $files,
         );
 
         return self::SUCCESS;
+    }
+
+    private function className(string $table): string
+    {
+        $string = strtolower($table);
+        $string = str_replace('_', ' ', $string);
+        $string = ucwords($string);
+        $string = str_replace(' ', '', $string);
+        return $string . 'TableRow';
+    }
+
+    /**
+     * @param array<string, mixed> $variables
+     */
+    public function render(string $template, array $variables = []): string
+    {
+        extract($variables, EXTR_SKIP);
+        ob_start();
+        require $template;
+        return ob_get_clean();
     }
 }

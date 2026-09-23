@@ -13,11 +13,9 @@ use JlacroixDev\PdoRow\Console\Command\VersionCommand;
 use JlacroixDev\PdoRow\Console\Output;
 use JlacroixDev\PdoRow\Filesystem\LocalFilesystem;
 use JlacroixDev\PdoRow\Generation\GeneratedFileWriter;
-use JlacroixDev\PdoRow\Generation\TableFilter;
 use JlacroixDev\PdoRow\TableInspector\MysqlSchemaInspector;
 use JlacroixDev\PdoRow\TableInspector\SqliteSchemaInspector;
 use JlacroixDev\PdoRow\TableInspector\TableInspector;
-use JlacroixDev\PdoRow\Template\TemplateRenderer;
 use JlacroixDev\PdoRow\Type\MysqlPhpTypeResolver;
 use JlacroixDev\PdoRow\Type\PhpTypeResolverCollection;
 use JlacroixDev\PdoRow\Type\SqlitePhpTypeResolver;
@@ -26,7 +24,6 @@ final class ApplicationFactory
 {
     public static function create(): Application
     {
-        $tableFilter = new TableFilter();
         $tableInspector = new TableInspector([
             new MysqlSchemaInspector(),
             new SqliteSchemaInspector(),
@@ -37,7 +34,6 @@ final class ApplicationFactory
             new SqlitePhpTypeResolver(),
         ]);
 
-        $renderer = new TemplateRenderer();
         $filesystem = new LocalFilesystem();
         $writer = new GeneratedFileWriter($filesystem);
         $output = new Output();
@@ -47,10 +43,8 @@ final class ApplicationFactory
             new GenerateCommand(
                 new GenerateOptionsParser(),
                 new ConfigLoader($filesystem),
-                $tableFilter,
                 $tableInspector,
                 $phpTypeResolvers,
-                $renderer,
                 $writer,
                 $filesystem,
                 $output,

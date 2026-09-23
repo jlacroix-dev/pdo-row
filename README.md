@@ -149,50 +149,6 @@ Use `withNamespace()` to change the namespace of generated classes:
 ->withNamespace('App\\Database\\Rows')
 ```
 
-### Naming strategy
-
-Use `withNamingStrategy()` to customize how database names are converted into PHP class and property names:
-
-```php
-->withNamingStrategy(
-    new JlacroixDev\PdoRow\Naming\MyNaming()
-)
-```
-
-Generated class and property names must be valid PHP identifiers.
-
-### Selecting tables
-
-Generate only specific tables:
-
-```php
-->onlyTables([
-    'users',
-    'orders',
-])
-```
-
-`onlyTables()` and `exceptTables()` cannot be used together.
-
-### Excluding tables
-
-Exclude specific tables:
-
-```php
-->exceptTables([
-    'migrations',
-    'sessions',
-])
-```
-
-### Custom template
-
-PDO Row uses a PHP template to generate classes. You can provide your own template:
-
-```php
-->withTemplate(__DIR__ . '/templates/class.tpl.php')
-```
-
 ## CLI
 
 ### Initialize configuration

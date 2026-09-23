@@ -7,6 +7,8 @@ use Tests\Fixtures\TestDatabase;
 
 $pdo = TestDatabase::mysql(false);
 
-return Config::configure($pdo)
-    ->withDirectory(__DIR__ . '/Generated/Native')
-    ->withNamespace('Tests\\Fixtures\\MySQL\\Generated\\Native');
+return new Config(
+    pdo: $pdo,
+    directory: __DIR__ . '/Generated/Native',
+    namespace: 'Tests\\Fixtures\\MySQL\\Generated\\Native',
+);
