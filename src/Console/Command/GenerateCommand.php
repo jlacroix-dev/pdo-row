@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace JlacroixDev\PdoRow\Console\Command;
 
 use JlacroixDev\PdoRow\Config\ConfigLoader;
-use JlacroixDev\PdoRow\Console\Output;
 use JlacroixDev\PdoRow\Database\MysqlDatabase;
 use JlacroixDev\PdoRow\Database\SqliteDatabase;
 use JlacroixDev\PdoRow\Filesystem\Filesystem;
 use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use JlacroixDev\PdoRow\Package;
-use JlacroixDev\PdoRow\Type\FetchTypeConfiguration;
 use PDO;
 use RuntimeException;
 
@@ -22,7 +20,6 @@ final readonly class GenerateCommand implements Command
         private GenerateOptionsParser $optionsParser,
         private ConfigLoader $configLoader,
         private Filesystem $filesystem,
-        private Output $output,
     ) {
     }
 
@@ -50,7 +47,7 @@ Options:
   --help                            Display this help message
  
 HELP;
-        $this->output->write($usage);
+        echo $usage . PHP_EOL;
     }
 
     public function run(array $argv): int
@@ -64,12 +61,12 @@ HELP;
 
         $config = $this->configLoader->load($options->configuration);
 
-        $this->output->write($config->__toString());
+        echo $config->__toString() . PHP_EOL;
 
         $directory = $config->directory;
         $this->filesystem->ensureDirectory($directory);
 
-        $this->output->write('Start generating...');
+        echo 'Start generating...' . PHP_EOL;
 
         $pdo = $config->pdo;
 
@@ -84,14 +81,11 @@ HELP;
 
         $tables = $database->inspect($pdo);
 
-        $fetchTypeConfiguration = new FetchTypeConfiguration(
-            stringifyFetches: (bool) $pdo->getAttribute(
-                PDO::ATTR_STRINGIFY_FETCHES
-            ),
-        );
+        $stringifyFetches = (bool)$pdo->getAttribute(PDO::ATTR_STRINGIFY_FETCHES);
+
         foreach ($tables as $table) {
             $columns = array_map(
-                function (DatabaseColumn $column) use ($database, $fetchTypeConfiguration): Column {
+                function (DatabaseColumn $column) use ($database, $stringifyFetches): Column {
                     $databaseColumn = new DatabaseColumn(
                         name: $column->name,
                         databaseType: $column->databaseType,
@@ -99,7 +93,7 @@ HELP;
                     );
                     $phpType = $database->phpType(
                         $databaseColumn,
-                        $fetchTypeConfiguration,
+                        $stringifyFetches,
                     );
                     return new Column(
                         name: $column->name,
