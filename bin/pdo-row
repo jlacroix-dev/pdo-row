@@ -3,8 +3,14 @@
 
 declare(strict_types=1);
 
-use JlacroixDev\PdoRow\ApplicationFactory;
+use JlacroixDev\PdoRow\Application;
+use JlacroixDev\PdoRow\Console\Output;
+use JlacroixDev\PdoRow\Filesystem\LocalFilesystem;
 
 include $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
 
-exit(ApplicationFactory::create()->run($argv));
+$application = new Application(
+    new Output(),
+    new LocalFilesystem(),
+);
+exit($application->run($argv));

@@ -18,7 +18,7 @@ final class ConfigLoader
     {
         $path ??= getcwd() . '/pdo-row.php';
 
-// todo get proper meassge instead of exception
+        // todo get proper message instead of exception
         if (!$this->filesystem->exists($path)) {
             throw new Exception("Config file '{$path}' not found. Run `pdo-row init` first.");
         }

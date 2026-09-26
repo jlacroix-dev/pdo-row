@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Type;
+namespace Tests\Unit\Database;
 
+use JlacroixDev\PdoRow\Database\SqliteDatabase;
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use JlacroixDev\PdoRow\Type\FetchTypeConfiguration;
-use JlacroixDev\PdoRow\Type\SqlitePhpTypeResolver;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class SqlitePhpTypeResolverTest extends TestCase
+class SqliteDatabaseTest extends TestCase
 {
     #[DataProvider('nativeTypesProvider')]
     public function testNativeTypeMapping(
         string $databaseType,
         string $expected,
     ): void {
-        $resolver = new SqlitePhpTypeResolver();
+        $database = new SqliteDatabase();
 
         $column = new DatabaseColumn(
             name: 'value',
@@ -27,7 +27,7 @@ class SqlitePhpTypeResolverTest extends TestCase
 
         self::assertSame(
             $expected,
-            $resolver->resolve(
+            $database->phpType(
                 $column,
                 new FetchTypeConfiguration(
                     stringifyFetches: false,
@@ -48,7 +48,7 @@ class SqlitePhpTypeResolverTest extends TestCase
     public function testStringification(
         string $databaseType,
     ): void {
-        $resolver = new SqlitePhpTypeResolver();
+        $database = new SqliteDatabase();
 
         $column = new DatabaseColumn(
             name: 'value',
@@ -58,7 +58,7 @@ class SqlitePhpTypeResolverTest extends TestCase
 
         self::assertSame(
             'string',
-            $resolver->resolve(
+            $database->phpType(
                 $column,
                 new FetchTypeConfiguration(
                     stringifyFetches: true,

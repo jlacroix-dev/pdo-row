@@ -6,25 +6,21 @@ namespace JlacroixDev\PdoRow\Console\Command;
 
 use JlacroixDev\PdoRow\Config\ConfigLoader;
 use JlacroixDev\PdoRow\Console\Output;
+use JlacroixDev\PdoRow\Database\MysqlDatabase;
+use JlacroixDev\PdoRow\Database\SqliteDatabase;
 use JlacroixDev\PdoRow\Filesystem\Filesystem;
-use JlacroixDev\PdoRow\Generation\GeneratedFile;
-use JlacroixDev\PdoRow\Generation\GeneratedFileWriter;
 use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
-use JlacroixDev\PdoRow\TableInspector\TableInspector;
 use JlacroixDev\PdoRow\Package;
 use JlacroixDev\PdoRow\Type\FetchTypeConfiguration;
-use JlacroixDev\PdoRow\Type\PhpTypeResolverCollection;
 use PDO;
+use RuntimeException;
 
 final readonly class GenerateCommand implements Command
 {
     public function __construct(
         private GenerateOptionsParser $optionsParser,
         private ConfigLoader $configLoader,
-        private TableInspector $tableInspector,
-        private PhpTypeResolverCollection $phpTypeResolvers,
-        private GeneratedFileWriter $writer,
         private Filesystem $filesystem,
         private Output $output,
     ) {
@@ -76,31 +72,42 @@ HELP;
         $this->output->write('Start generating...');
 
         $pdo = $config->pdo;
-        $tables = $this->tableInspector
-            ->inspect($pdo);
 
         /** @var string $driverName */
         $driverName = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+
+        $database = match ($driverName) {
+            'mysql' => new MysqlDatabase(),
+            'sqlite' => new SqliteDatabase(),
+            default => throw new RuntimeException("Unsupported PDO driver: $driverName"),
+        };
+
+        $tables = $database->inspect($pdo);
 
         $fetchTypeConfiguration = new FetchTypeConfiguration(
             stringifyFetches: (bool) $pdo->getAttribute(
                 PDO::ATTR_STRINGIFY_FETCHES
             ),
         );
-
-        $files = [];
         foreach ($tables as $table) {
             $columns = array_map(
-                fn (DatabaseColumn $column): Column => new Column(
-                    name: $column->name,
-                    databaseType: $column->databaseType,
-                    phpType: $this->phpTypeResolvers->resolve(
-                        $driverName,
-                        $column,
+                function (DatabaseColumn $column) use ($database, $fetchTypeConfiguration): Column {
+                    $databaseColumn = new DatabaseColumn(
+                        name: $column->name,
+                        databaseType: $column->databaseType,
+                        nullable: $column->nullable,
+                    );
+                    $phpType = $database->phpType(
+                        $databaseColumn,
                         $fetchTypeConfiguration,
-                    ),
-                    nullable: $column->nullable,
-                ),
+                    );
+                    return new Column(
+                        name: $column->name,
+                        databaseType: $column->databaseType,
+                        phpType: $phpType,
+                        nullable: $column->nullable,
+                    );
+                },
                 $table->columns,
             );
 
@@ -114,13 +121,9 @@ HELP;
                 'columns' => $columns,
             ]);
 
-            $files[] = new GeneratedFile($filename, $code);
+            $path = "{$directory}/{$filename}";
+            $this->filesystem->write($path, $code);
         }
-
-        $this->writer->write(
-            $config->directory,
-            $files,
-        );
 
         return self::SUCCESS;
     }
