@@ -2,26 +2,21 @@
 
 declare(strict_types=1);
 
-namespace JlacroixDev\PdoRow\TableInspector;
+namespace JlacroixDev\PdoRow\Database;
 
 use Exception;
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use JlacroixDev\PdoRow\Model\Table;
-use JlacroixDev\PdoRow\Repository\PDO\MySQL\TableRow\TablesTableRow;
+use JlacroixDev\PdoRow\Type\FetchTypeConfiguration;
 use PDO;
 use RuntimeException;
 
-final class MysqlSchemaInspector implements SchemaInspector
+final class MysqlDatabase implements Database
 {
-    public function driverNameSupported(): string
-    {
-        return 'mysql';
-    }
-
     public function inspect(PDO $pdo): array
     {
         $sql = <<<SQL
-SELECT *
+SELECT TABLE_NAME
 FROM information_schema.tables
 WHERE TABLE_SCHEMA = DATABASE()
 ORDER BY TABLE_NAME
@@ -32,12 +27,12 @@ SQL;
         }
 
         $tables = [];
-        /** @var TablesTableRow[] $rows */
-        $rows = $stmt->fetchAll(PDO::FETCH_CLASS, TablesTableRow::class);
-        foreach ($rows as $row) {
+        /** @var string[] $names */
+        $names = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($names as $name) {
             $tables[] = new Table(
-                name: $row->TABLE_NAME,
-                columns: $this->columns($pdo, $row->TABLE_NAME),
+                name: $name,
+                columns: $this->columns($pdo, $name),
             );
         }
 
@@ -73,5 +68,36 @@ SQL;
         }
 
         return $columns;
+    }
+
+    public function phpType(DatabaseColumn $column, FetchTypeConfiguration $configuration): string
+    {
+        if ($configuration->stringifyFetches) {
+            return 'string';
+        }
+
+        $type = $column->databaseType;
+
+        return match ($type) {
+            'STRING' => 'string',
+            'VAR_STRING' => 'string',
+            'DATE' => 'string',
+            'DATETIME' => 'string',
+            'TIME' => 'string',
+            'TIMESTAMP' => 'string',
+            'YEAR' => 'string',
+            'TINY' => 'int',
+            'SHORT' => 'int',
+            'INT24' => 'int',
+            'LONG' => 'int',
+            'LONGLONG' => 'int|string',
+            'NEWDECIMAL' => 'string',
+            'FLOAT' => 'float',
+            'DOUBLE' => 'float',
+            'BLOB' => 'string',
+            'BIT' => 'int',
+
+            default => throw new RuntimeException('Unsuported type'),
+        };
     }
 }
