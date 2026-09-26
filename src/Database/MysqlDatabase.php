@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace JlacroixDev\PdoRow\Database;
 
 use Exception;
-use JlacroixDev\PdoRow\Model\DatabaseColumn;
+use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Model\Table;
 use PDO;
 use RuntimeException;
@@ -39,10 +39,12 @@ SQL;
     }
 
     /**
-     * @return DatabaseColumn[]
+     * @return Column[]
      */
     private function columns(PDO $pdo, string $table): array
     {
+        $stringifyFetches = (bool)$pdo->getAttribute(PDO::ATTR_STRINGIFY_FETCHES);
+
         $sql = <<<SQL
 SELECT *
 FROM `{$table}`
@@ -59,25 +61,25 @@ SQL;
             if ($meta === false) {
                 throw new RuntimeException('Not able to get column meta');
             }
-            $columns[] = new DatabaseColumn(
-                name: $meta['name'],
-                databaseType: $meta['native_type'] ?? '',
-                nullable: !in_array('not_null', $meta['flags'], true),
-            );
+
+            $name = $meta['name'];
+            $databaseType = $meta['native_type'] ?? '';
+            $phpType = $this->phpType($databaseType, $stringifyFetches);
+            $nullable = !in_array('not_null', $meta['flags'], true);
+
+            $columns[] = new Column($name, $databaseType, $phpType, $nullable);
         }
 
         return $columns;
     }
 
     public function phpType(
-        DatabaseColumn $column,
+        string $type,
         bool $stringifyFetches,
     ): string {
         if ($stringifyFetches) {
             return 'string';
         }
-
-        $type = $column->databaseType;
 
         return match ($type) {
             'STRING' => 'string',
