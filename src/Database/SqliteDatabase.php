@@ -7,7 +7,6 @@ namespace JlacroixDev\PdoRow\Database;
 use Exception;
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use JlacroixDev\PdoRow\Model\Table;
-use JlacroixDev\PdoRow\Type\FetchTypeConfiguration;
 use PDO;
 
 final class SqliteDatabase implements Database
@@ -72,9 +71,11 @@ SQL;
         return $columns;
     }
 
-    public function phpType(DatabaseColumn $column, FetchTypeConfiguration $configuration): string
-    {
-        if ($configuration->stringifyFetches) {
+    public function phpType(
+        DatabaseColumn $column,
+        bool $stringifyFetches,
+    ): string {
+        if ($stringifyFetches) {
             return 'string';
         }
 
