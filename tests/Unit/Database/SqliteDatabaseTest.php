@@ -6,7 +6,6 @@ namespace Tests\Unit\Database;
 
 use JlacroixDev\PdoRow\Database\SqliteDatabase;
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
-use JlacroixDev\PdoRow\Type\FetchTypeConfiguration;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -27,12 +26,7 @@ class SqliteDatabaseTest extends TestCase
 
         self::assertSame(
             $expected,
-            $database->phpType(
-                $column,
-                new FetchTypeConfiguration(
-                    stringifyFetches: false,
-                ),
-            ),
+            $database->phpType($column, false),
         );
     }
 
@@ -58,12 +52,7 @@ class SqliteDatabaseTest extends TestCase
 
         self::assertSame(
             'string',
-            $database->phpType(
-                $column,
-                new FetchTypeConfiguration(
-                    stringifyFetches: true,
-                ),
-            ),
+            $database->phpType($column, true),
         );
     }
 

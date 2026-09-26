@@ -6,7 +6,6 @@ namespace JlacroixDev\PdoRow\Database;
 
 use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use JlacroixDev\PdoRow\Model\Table;
-use JlacroixDev\PdoRow\Type\FetchTypeConfiguration;
 use PDO;
 
 interface Database
@@ -18,6 +17,6 @@ interface Database
 
     public function phpType(
         DatabaseColumn $column,
-        FetchTypeConfiguration $configuration,
+        bool $stringifyFetches,
     ): string;
 }
