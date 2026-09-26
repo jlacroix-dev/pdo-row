@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace JlacroixDev\PdoRow\Database;
 
 use Exception;
-use JlacroixDev\PdoRow\Model\DatabaseColumn;
+use JlacroixDev\PdoRow\Model\Column;
 use JlacroixDev\PdoRow\Model\Table;
 use PDO;
 
@@ -39,13 +39,13 @@ SQL;
     }
 
     /**
-     * @return DatabaseColumn[]
+     * @return Column[]
      */
     private function columns(PDO $pdo, string $table): array
     {
-        $stmt = $pdo->query(
-            "PRAGMA table_info('{$table}')"
-        );
+        $stringifyFetches = (bool)$pdo->getAttribute(PDO::ATTR_STRINGIFY_FETCHES);
+
+        $stmt = $pdo->query("PRAGMA table_info('{$table}')");
         if ($stmt === false) {
             throw new Exception('Fail to query DB');
         }
@@ -61,18 +61,19 @@ SQL;
          */
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
-            $columns[] = new DatabaseColumn(
-                name: $row['name'],
-                databaseType: $row['type'],
-                nullable: (int) $row['notnull'] === 0,
-            );
+            $name = $row['name'];
+            $databaseType = $row['type'];
+            $phpType = $this->phpType($databaseType, $stringifyFetches);
+            $nullable = (int)$row['notnull'] === 0;
+
+            $columns[] = new Column($name, $databaseType, $phpType, $nullable);
         }
 
         return $columns;
     }
 
     public function phpType(
-        DatabaseColumn $column,
+        string $type,
         bool $stringifyFetches,
     ): string {
         if ($stringifyFetches) {
@@ -83,8 +84,8 @@ SQL;
             preg_replace(
                 '/\(.*/',
                 '',
-                $column->databaseType
-            ) ?? $column->databaseType
+                $type
+            ) ?? $type
         );
 
         $affinity = match ($type) {

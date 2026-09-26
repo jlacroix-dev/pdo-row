@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Database;
 
 use JlacroixDev\PdoRow\Database\SqliteDatabase;
-use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -18,15 +17,9 @@ class SqliteDatabaseTest extends TestCase
     ): void {
         $database = new SqliteDatabase();
 
-        $column = new DatabaseColumn(
-            name: 'value',
-            databaseType: $databaseType,
-            nullable: false,
-        );
-
         self::assertSame(
             $expected,
-            $database->phpType($column, false),
+            $database->phpType($databaseType, false),
         );
     }
 
@@ -44,15 +37,9 @@ class SqliteDatabaseTest extends TestCase
     ): void {
         $database = new SqliteDatabase();
 
-        $column = new DatabaseColumn(
-            name: 'value',
-            databaseType: $databaseType,
-            nullable: false,
-        );
-
         self::assertSame(
             'string',
-            $database->phpType($column, true),
+            $database->phpType($databaseType, true),
         );
     }
 

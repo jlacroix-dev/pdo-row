@@ -8,8 +8,6 @@ use JlacroixDev\PdoRow\Config\ConfigLoader;
 use JlacroixDev\PdoRow\Database\MysqlDatabase;
 use JlacroixDev\PdoRow\Database\SqliteDatabase;
 use JlacroixDev\PdoRow\Filesystem\Filesystem;
-use JlacroixDev\PdoRow\Model\Column;
-use JlacroixDev\PdoRow\Model\DatabaseColumn;
 use JlacroixDev\PdoRow\Package;
 use PDO;
 use RuntimeException;
@@ -80,31 +78,7 @@ HELP;
         };
 
         $tables = $database->inspect($pdo);
-
-        $stringifyFetches = (bool)$pdo->getAttribute(PDO::ATTR_STRINGIFY_FETCHES);
-
         foreach ($tables as $table) {
-            $columns = array_map(
-                function (DatabaseColumn $column) use ($database, $stringifyFetches): Column {
-                    $databaseColumn = new DatabaseColumn(
-                        name: $column->name,
-                        databaseType: $column->databaseType,
-                        nullable: $column->nullable,
-                    );
-                    $phpType = $database->phpType(
-                        $databaseColumn,
-                        $stringifyFetches,
-                    );
-                    return new Column(
-                        name: $column->name,
-                        databaseType: $column->databaseType,
-                        phpType: $phpType,
-                        nullable: $column->nullable,
-                    );
-                },
-                $table->columns,
-            );
-
             $className = $this->className($table->name);
             $filename = "{$className}.php";
 
@@ -112,7 +86,7 @@ HELP;
                 'version' => Package::version(),
                 'namespace' => $config->namespace,
                 'className' => $className,
-                'columns' => $columns,
+                'columns' => $table->columns,
             ]);
 
             $path = "{$directory}/{$filename}";

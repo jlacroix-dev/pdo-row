@@ -7,7 +7,7 @@ namespace JlacroixDev\PdoRow\Model;
 final readonly class Table
 {
     /**
-     * @param DatabaseColumn[] $columns
+     * @param Column[] $columns
      */
     public function __construct(
         public string $name,
